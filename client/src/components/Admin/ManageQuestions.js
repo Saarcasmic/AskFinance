@@ -30,7 +30,7 @@ const ManageQuestions = () => {
   // Approve a question
   const handleApprove = async (questionId) => {
     try {
-      await axios.put(`http://127.0.0.1:8000/questions/${questionId}/approve`);
+      await axios.put(`${config.API_BASE_URL}/questions/${questionId}/approve`);
       alert("Question approved successfully!");
       setQuestions((prevQuestions) =>
         prevQuestions.map((question) =>
@@ -45,7 +45,7 @@ const ManageQuestions = () => {
   // Reject a question
   const handleReject = async (questionId) => {
     try {
-      await axios.put(`http://127.0.0.1:8000/questions/${questionId}/reject`);
+      await axios.put(`${config.API_BASE_URL}/questions/${questionId}/reject`);
       alert("Question rejected successfully!");
       setQuestions((prevQuestions) =>
         prevQuestions.map((question) =>
@@ -60,7 +60,7 @@ const ManageQuestions = () => {
   // Delete a question
   const handleDelete = async (questionId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/questions/${questionId}`);
+      await axios.delete(`${config.API_BASE_URL}/questions/${questionId}`);
       alert("Question deleted successfully!");
       setQuestions((prevQuestions) =>
         prevQuestions.filter((question) => question._id !== questionId)
