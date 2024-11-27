@@ -11,6 +11,7 @@ const Login = () => {
   const { setIsLoggedIn, setIsAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // Handle normal login with email and password
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -36,12 +37,13 @@ const Login = () => {
     }
   };
 
+  // Handle Google login success
   const handleGoogleLoginSuccess = async (response) => {
     try {
-      const token = response.credential;
-      localStorage.setItem("token", token);
+      const token = response.credential;  // Google JWT token
+      localStorage.setItem("token", token); // Store in localStorage
 
-      // Fetch user info after Google login
+      // Fetch user info using the token
       const userResponse = await axios.get(`${config.API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -56,6 +58,7 @@ const Login = () => {
     }
   };
 
+  // Handle Google login failure
   const handleGoogleLoginFailure = (error) => {
     console.error("Google login error", error);
     alert("Google login failed. Please try again.");
