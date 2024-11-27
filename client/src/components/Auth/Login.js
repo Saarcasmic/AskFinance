@@ -40,30 +40,27 @@ const Login = () => {
   // Handle Google login success
   const handleGoogleLoginSuccess = async (response) => {
     try {
-      const token = response.credential;  // Google OAuth token
-      localStorage.setItem("token", token);  // Store token
-  
-      // Send the token to the backend for further validation
-      const userResponse = await axios.post(`${config.API_BASE_URL}/auth/google-login`, {
-        token: token,  // Send the token in the body as `token`
-      });
-  
-      const { access_token } = userResponse.data;
-      localStorage.setItem("token", access_token);  // Store access token
-  
-      setIsLoggedIn(true);
-  
-      const userDetails = await axios.get(`${config.API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-  
-      setIsAdmin(userDetails.data.is_admin);
-      navigate("/dashboard");
+        if (!response.credential) {
+            throw new Error("Invalid Google token received.");
+        }
+
+        const token = response.credential;
+        localStorage.setItem("token", token);
+
+        const userResponse = await axios.post(`${config.API_BASE_URL}/auth/google-login`, {
+            token: token,  // Send token in the expected format
+        });
+
+        const { access_token } = userResponse.data;
+        localStorage.setItem("token", access_token);
+        setIsLoggedIn(true);
+        navigate("/dashboard");
     } catch (error) {
-      console.error("Google login failed", error);
-      alert("Google login failed. Please try again.");
+        console.error("Google login failed", error);
+        alert("Google login failed. Please try again.");
     }
-  };
+};
+
   
   
   
