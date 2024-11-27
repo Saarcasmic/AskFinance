@@ -1,7 +1,13 @@
+# This file is used to configure your service on Render
+
 services:
   - type: web
-    name: fastapi-backend
+    name: askfinance-backend
+    root: server
+    build:
+      # Command to install dependencies
+      command: |
+        pip install -r requirements.txt
+    start: uvicorn server.main:app --host 0.0.0.0 --port 8000
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app"
     plan: free
