@@ -21,3 +21,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(questions.router, prefix="/questions", tags=["Questions"])
 app.include_router(questions.router, prefix="/comments")
+
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
