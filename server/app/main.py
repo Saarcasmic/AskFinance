@@ -9,12 +9,14 @@ origins = [
     "http://localhost:3000",  # Your frontend URL
 ]
 
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Allows frontend to connect
+    allow_origins=["https://askfinance.netlify.app"],  # Replace with your frontend URL
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include routes
