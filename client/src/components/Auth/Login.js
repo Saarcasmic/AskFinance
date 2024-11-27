@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
+import config from "../../config";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:8000/auth/login", {
+      const response = await axios.post(`${config.API_BASE_URL}/auth/login`, {
         email,
         password,
       });
@@ -23,7 +24,7 @@ const Login = () => {
 
       setIsLoggedIn(true);
 
-      const userResponse = await axios.get("http://127.0.0.1:8000/auth/me", {
+      const userResponse = await axios.get(`${config.API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsAdmin(userResponse.data.is_admin);
