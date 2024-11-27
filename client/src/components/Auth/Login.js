@@ -43,16 +43,17 @@ const Login = () => {
       const token = response.credential;  // Google OAuth token
       localStorage.setItem("token", token);  // Store token
   
-      // Ensure this URL is correct and matches the backend route
+      // Send the token to the backend for further validation
       const userResponse = await axios.post(`${config.API_BASE_URL}/auth/google-login`, {
-        token: token,
+        token: token,  // Send the token in the body as `token`
       });
   
       const { access_token } = userResponse.data;
       localStorage.setItem("token", access_token);  // Store access token
+  
       setIsLoggedIn(true);
   
-      const userDetails = await axios.get(`${config.API_BASE_URL}/me`, {
+      const userDetails = await axios.get(`${config.API_BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${access_token}` },
       });
   
@@ -63,6 +64,8 @@ const Login = () => {
       alert("Google login failed. Please try again.");
     }
   };
+  
+  
   
   
   
