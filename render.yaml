@@ -1,13 +1,11 @@
-# This file is used to configure your service on Render
-
 services:
   - type: web
     name: askfinance-backend
-    root: server
+    root: server          # Point to the root folder of your backend (server)
     build:
       # Command to install dependencies
       command: |
         pip install -r requirements.txt
-    start: uvicorn server.app.main:app --host 0.0.0.0 --port 8000
+    start: uvicorn app.main:app --host 0.0.0.0 --port 8000  # Point to app.main for FastAPI
     env: python
     plan: free
