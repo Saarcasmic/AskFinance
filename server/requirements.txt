@@ -6,8 +6,10 @@ aiohttp==3.8.6  # For asynchronous HTTP requests if required
 sqlalchemy==2.0.29  # If using SQLAlchemy ORM in addition to MongoDB
 dnspython==2.6.1   # For DNS-related utilities in your project
 python-dotenv==1.0.0  # For environment variable management
+pydantic[email]  # or email-validator
 
 # For development purposes
 black==21.12b0
 pytest==7.2.0
+
 flake8==4.0.1
