@@ -12,7 +12,7 @@ const HomePage = () => {
       </p>
       <button
         className="bg-yellow-400 text-black font-semibold px-8 py-4 rounded-lg shadow-md transform transition duration-300 hover:bg-yellow-500 hover:scale-105"
-        onClick={() => (window.location.href = "/dashboard")}
+        onClick={() => (window.location.href = "/login")}
       >
         Get Started
       </button>
