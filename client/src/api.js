@@ -1,8 +1,8 @@
 import axios from "axios";
-import config from "./config";
+// import config from "./config";
 
 // Create an instance of Axios with the backend URL
-const API = axios.create({ baseURL: config.API_BASE_URL });
+const API = axios.create({ baseURL: "https://askfinance.onrender.com" });
 
 // Add authorization token to requests (optional for protected endpoints)
 API.interceptors.request.use((req) => {
