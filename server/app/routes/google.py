@@ -26,11 +26,19 @@ async def google_login(request: GoogleLoginRequest):
     
     try:
         # Validate token with Google
+        print("Received token:", request.token)
+
         token_url = "https://oauth2.googleapis.com/tokeninfo"
         token_info = requests.get(f"{token_url}?id_token={request.token}")
         token_info.raise_for_status()
 
+        
+
+
         user_info = token_info.json()
+
+        print("User info:", user_info)
+
         return {"message": "Google login successful", "user_info": user_info}
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=400, detail=f"Google token validation failed: {str(e)}")

@@ -51,6 +51,9 @@ const Login = () => {
             token: token,  // Send token in the expected format
         });
 
+        console.log("Google token:", token);
+        console.log("User data:", userResponse.data);
+
         const { access_token } = userResponse.data;
         localStorage.setItem("token", access_token);
         setIsLoggedIn(true);
