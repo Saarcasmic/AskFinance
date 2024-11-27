@@ -44,7 +44,7 @@ const Login = () => {
       localStorage.setItem("token", token);  // Store token
   
       // Ensure this URL is correct and matches the backend route
-      const userResponse = await axios.post(`${config.API_BASE_URL}/google-login`, {
+      const userResponse = await axios.post(`${config.API_BASE_URL}/auth/google-login`, {
         token: token,
       });
   
