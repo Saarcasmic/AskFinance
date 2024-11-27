@@ -1,0 +1,76 @@
+import React, { useState, useContext } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../AuthContext";
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { setIsLoggedIn, setIsAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/auth/login", {
+        email,
+        password,
+      });
+      alert("Login successful");
+
+      const token = response.data.access_token;
+      localStorage.setItem("token", token);
+
+      setIsLoggedIn(true);
+
+      const userResponse = await axios.get("http://127.0.0.1:8000/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setIsAdmin(userResponse.data.is_admin);
+
+      navigate("/dashboard");
+    } catch (error) {
+      alert("Login failed. Please check your credentials.");
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-green-500 to-blue-500 text-white">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Login</h1>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-4 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-4 mb-6 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button
+            type="submit"
+            className="w-full py-4 bg-green-500 text-white rounded-md text-xl font-semibold transition duration-300 hover:bg-green-600"
+          >
+            Login
+          </button>
+        </form>
+        <div className="mt-6 text-center">
+          <button
+            className="w-full py-4 bg-blue-500 text-white rounded-md text-xl font-semibold transition duration-300 hover:bg-blue-600"
+            onClick={() => navigate("/signup")}
+          >
+            Signup
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
