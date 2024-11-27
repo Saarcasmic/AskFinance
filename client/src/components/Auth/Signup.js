@@ -11,7 +11,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      
+      // eslint-disable-next-line
       const response = await axios.post("http://127.0.0.1:8000/auth/signup", {
         username,
         email,
