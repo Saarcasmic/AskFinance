@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.routes import auth, questions
 from fastapi.middleware.cors import CORSMiddleware
+from app.routes.google import router as google_auth_router
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(questions.router, prefix="/questions", tags=["Questions"])
 app.include_router(questions.router, prefix="/comments")
+app.include_router(google_auth_router, prefix="/auth", tags=["Google OAuth"])
 
 
 @app.get("/")

@@ -8,6 +8,7 @@ dnspython==2.6.1   # For DNS-related utilities in your project
 python-dotenv==1.0.0  # For environment variable management
 pydantic[email]  # or email-validator
 pymongo[srv]  # or pymongo[tls]
+google-auth==2.36.0  # For Google OAuth2 authentication
 
 # For development purposes
 black==21.12b0
