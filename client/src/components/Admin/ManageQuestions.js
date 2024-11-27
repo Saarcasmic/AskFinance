@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import config from "../../config";
 
 const ManageQuestions = () => {
   const [questions, setQuestions] = useState([]); // Ensure it's an array
@@ -9,7 +10,7 @@ const ManageQuestions = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/questions");
+        const response = await axios.get(`${config.API_BASE_URL}/questions`);
         if (Array.isArray(response.data.questions)) {
           setQuestions(response.data.questions);
         } else {

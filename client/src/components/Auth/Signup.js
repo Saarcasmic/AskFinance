@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from "../../config";
 
 const Signup = () => {
   const [username, setUsername] = useState(""); 
@@ -12,7 +13,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       // eslint-disable-next-line
-      const response = await axios.post("http://127.0.0.1:8000/auth/signup", {
+      const response = await axios.post(`${config.API_BASE_URL}/auth/signup`, {
         username,
         email,
         password,

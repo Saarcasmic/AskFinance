@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from "../../config";
 
 const CommentSection = ({ questionId, isAdmin }) => {
   const [comments, setComments] = useState([]);
@@ -10,7 +11,7 @@ const CommentSection = ({ questionId, isAdmin }) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/questions/${questionId}/comments`
+          `${config.API_BASE_URL}/questions/${questionId}/comments`
         );
         setComments(response.data.comments);
       } catch (err) {
@@ -28,7 +29,7 @@ const CommentSection = ({ questionId, isAdmin }) => {
       if (!token) throw new Error("User is not authenticated.");
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/questions/${questionId}/comments`,
+        `${config.API_BASE_URL}/questions/${questionId}/comments`,
         { content: newComment },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from "../../config";
 
 const PostQuestion = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -39,7 +40,7 @@ const PostQuestion = () => {
         approved,
         user_id: userId,
       };
-      await axios.post("http://127.0.0.1:8000/questions", questionData);
+      await axios.post(`${config.API_BASE_URL}/questions`, questionData);
       alert("Question posted!");
       setTitle("");
       setDescription("");
