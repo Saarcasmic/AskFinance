@@ -11,19 +11,19 @@ GOOGLE_CLIENT_ID = os.getenv("1030108090732-7pl8nojvrq5joutvuruqbisnfspfabu6.app
 GOOGLE_CLIENT_SECRET = os.getenv("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")
 REDIRECT_URI = os.getenv("https://askfinance.netlify.app/auth/callback")  # Ensure this is correct
 
+
 router = APIRouter()
 
-
-# Define a model for the request
+# Define a model for the request that expects the token in the body
 class GoogleLoginRequest(BaseModel):
-    token: str
+    token: str  # token will be received in the request body
 
 # Route for Google login
 @router.post("/google-login")
 async def google_login(request: GoogleLoginRequest):
     """Exchange the Google OAuth token for a valid session."""
     try:
-        token = request.token
+        token = request.token  # Get the token from the request body
         # Validate the token with Google
         token_url = "https://oauth2.googleapis.com/tokeninfo"
         token_info = requests.get(f"{token_url}?id_token={token}")
