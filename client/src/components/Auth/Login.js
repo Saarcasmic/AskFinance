@@ -40,23 +40,33 @@ const Login = () => {
   // Handle Google login success
   const handleGoogleLoginSuccess = async (response) => {
     try {
-      const token = response.credential;  // Google JWT token
-      localStorage.setItem("token", token); // Store in localStorage
-
-      // Fetch user info using the token
-      const userResponse = await axios.get(`${config.API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const token = response.credential;  // Google OAuth token
+      localStorage.setItem("token", token);  // Store token
+  
+      // Send the token to backend to authenticate
+      const userResponse = await axios.post(`${config.API_BASE_URL}/google-login`, {
+        token: token,
       });
-
+  
+      // Process the response and save the access token
+      const { access_token } = userResponse.data;
+      localStorage.setItem("token", access_token);  // Save token in localStorage
       setIsLoggedIn(true);
-      setIsAdmin(userResponse.data.is_admin);
-
+  
+      // Fetch user details
+      const userDetails = await axios.get(`${config.API_BASE_URL}/me`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+  
+      setIsAdmin(userDetails.data.is_admin);
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login failed", error);
       alert("Google login failed. Please try again.");
     }
   };
+  
+  
 
   // Handle Google login failure
   const handleGoogleLoginFailure = (error) => {
