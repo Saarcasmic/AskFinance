@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import RedirectResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import os
 from dotenv import load_dotenv
 import requests
@@ -9,13 +8,10 @@ from pydantic import BaseModel
 # Load environment variables from .env
 load_dotenv()
 
-# Configuration
+# Configuration - Make sure to load these from your environment variables
 GOOGLE_CLIENT_ID = os.getenv("1030108090732-7pl8nojvrq5joutvuruqbisnfspfabu6.apps.googleusercontent.com")
 GOOGLE_CLIENT_SECRET = os.getenv("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")
-REDIRECT_URI = os.getenv("https://askfinance.netlify.app/auth/callbackv")  # This should be something like 'https://askfinance.netlify.app/auth/callback'
-
-# OAuth2PasswordBearer to handle the token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+REDIRECT_URI = os.getenv("https://askfinance.netlify.app/auth/callback")  # This should be something like 'https://askfinance.netlify.app/auth/callback'
 
 router = APIRouter()
 
@@ -25,8 +21,9 @@ class Token(BaseModel):
     token_type: str
 
 # Route for initiating Google OAuth
-@router.post("/google-login")
+@router.get("/google-login")
 async def google_login():
+    """Redirect the user to Google's OAuth2 authorization page"""
     google_auth_url = (
         f"https://accounts.google.com/o/oauth2/v2/auth?"
         f"client_id={GOOGLE_CLIENT_ID}&redirect_uri={REDIRECT_URI}&"
@@ -49,6 +46,7 @@ async def google_callback(code: str):
             "grant_type": "authorization_code"
         }
 
+        # Send a POST request to get the token
         token_response = requests.post(token_url, data=token_data)
         token_response.raise_for_status()  # Raise error if response is unsuccessful
         token_data = token_response.json()
@@ -69,14 +67,7 @@ async def google_callback(code: str):
             "access_token": access_token,
             "user_info": user_info
         }
-    
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"OAuth2 error: {str(e)}")
 
-# Route to handle OAuth2 token login
-@router.post("/token", response_model=Token)
-async def login_with_oauth2(form_data: OAuth2PasswordRequestForm = Depends()):
-    """This is a mock route to simulate OAuth2 login."""
-    # In this case, you would usually validate the form_data (username and password).
-    # Since Google OAuth2 will handle that for you, this route may not be needed.
-    return {"access_token": "dummy_access_token", "token_type": "bearer"}
