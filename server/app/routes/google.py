@@ -25,7 +25,7 @@ class Token(BaseModel):
     token_type: str
 
 # Route for initiating Google OAuth
-@router.get("/google/login")
+@router.post("/google-login")
 async def google_login():
     google_auth_url = (
         f"https://accounts.google.com/o/oauth2/v2/auth?"
