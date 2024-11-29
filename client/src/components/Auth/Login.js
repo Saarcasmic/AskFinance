@@ -37,6 +37,8 @@ const Login = () => {
     }
   };
 
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
   // Handle Google login success
   const handleGoogleLoginSuccess = async (response) => {
     try {
@@ -69,7 +71,7 @@ const Login = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId="1030108090732-7pl8nojvrq5joutvuruqbisnfspfabu6.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={clientId}>
       <div className="min-h-screen bg-gradient-to-b from-green-500 via-green-600 to-green-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="relative">
