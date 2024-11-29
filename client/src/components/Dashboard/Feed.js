@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { getApprovedQuestions, deleteQuestion, editQuestion } from "../../api";
+import { getApprovedQuestions, deleteQuestion, editQuestion, likeQuestion,dislikeQuestion } from "../../api";
 import CommentSection from "./CommentSection";
 import { AuthContext } from "../../AuthContext";
 
@@ -215,20 +215,25 @@ const Feed = () => {
                     </button>
                     <button
                       className={`text-green-600 font-semibold ${
-                        question.likes.includes(userId) ? "text-green-800" : ""
+                        question.likes?.includes(userId) ? "text-green-800" : ""
                       }`}
                       onClick={() => handleLike(question._id)}
                     >
-                      👍 {question.likes.length}
+                      👍 {question.likes?.length || 0}
                     </button>
                     <button
                       className={`text-red-600 font-semibold ${
-                        question.dislikes.includes(userId) ? "text-red-800" : ""
+                        question.dislikes?.includes(userId) ? "text-red-800" : ""
                       }`}
                       onClick={() => handleDislike(question._id)}
                     >
-                      👎 {question.dislikes.length}
+                      👎 {question.dislikes?.length || 0}
                     </button>
+                    
+                    <button className="text-gray-600 font-semibold">
+                      {question.likes?.length - question.dislikes?.length || 0}
+                    </button>
+
                     {(isAdmin || question.user_id === userId) && (
                       <div className="flex gap-2">
                         <button
