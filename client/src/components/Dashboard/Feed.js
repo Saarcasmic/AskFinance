@@ -238,9 +238,8 @@ const Feed = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Title */}
-        <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
+      <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
           Approved Questions
         </h1>
 
