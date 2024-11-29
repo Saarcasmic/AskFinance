@@ -63,14 +63,6 @@ const Login = () => {
         alert("Google login failed. Please try again.");
     }
 };
-
-  
-  
-  
-  
-  
-  
-
   // Handle Google login failure
   const handleGoogleLoginFailure = (error) => {
     console.error("Google login error", error);
@@ -79,50 +71,75 @@ const Login = () => {
 
   return (
     <GoogleOAuthProvider clientId="1030108090732-7pl8nojvrq5joutvuruqbisnfspfabu6.apps.googleusercontent.com">
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-green-500 to-blue-500 text-white">
-        <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-          <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Login</h1>
-          <form onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-4 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-4 mb-4 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 bg-white"
-            />
-            <button
-              type="submit"
-              className="w-full py-4 bg-green-500 text-white rounded-md text-xl font-semibold transition duration-300 hover:bg-green-600"
-            >
-              Login
-            </button>
-          </form>
-          <div className="mt-6 text-center">
-            <button
-              className="w-full py-4 bg-blue-500 text-white rounded-md text-xl font-semibold transition duration-300 hover:bg-blue-600"
-              onClick={() => navigate("/signup")}
-            >
-              Signup
-            </button>
-          </div>
+      <div className="min-h-screen bg-gradient-to-b from-green-500 via-green-600 to-green-700 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="relative">
+            {/* Background decoration */}
+            <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
+              <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-100 to-green-200"></div>
+              <div className="blur-[106px] h-32 bg-gradient-to-r from-green-200 to-yellow-100"></div>
+            </div>
 
-          <div className="mt-6">
-            {/* Google OAuth Button */}
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={handleGoogleLoginFailure}
-              useOneTap
-              theme="filled_blue"
-              shape="circle"
-              size="large"
-            />
+            {/* Login Form Container */}
+            <div className="relative flex flex-col items-center justify-center">
+              <div className="w-full max-w-md p-8 bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl">
+                <h1 className="text-4xl font-bold text-center text-white mb-8">Welcome Back</h1>
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div>
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-4 border-2 border-white/20 rounded-lg bg-white/10 backdrop-blur-sm 
+                               focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
+                               text-white placeholder-white/60"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-4 border-2 border-white/20 rounded-lg bg-white/10 backdrop-blur-sm
+                               focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
+                               text-white placeholder-white/60"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-4 bg-green-400 text-white rounded-lg text-xl font-semibold
+                             transition duration-300 hover:bg-green-300 hover:shadow-lg
+                             focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  >
+                    Sign In
+                  </button>
+                </form>
+
+                <div className="mt-6">
+                  <button
+                    onClick={() => navigate("/signup")}
+                    className="w-full py-4 bg-white/10 backdrop-blur-sm text-white rounded-lg text-xl
+                             font-semibold transition duration-300 hover:bg-white/20
+                             border-2 border-white/20"
+                  >
+                    Create Account
+                  </button>
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleLoginSuccess}
+                    onError={handleGoogleLoginFailure}
+                    useOneTap
+                    theme="filled_blue"
+                    shape="circle"
+                    size="large"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
