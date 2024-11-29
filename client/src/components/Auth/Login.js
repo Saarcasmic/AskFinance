@@ -47,7 +47,7 @@ const Login = () => {
         const token = response.credential;
         localStorage.setItem("token", token);
 
-        const userResponse = await axios.post(`${config.API_BASE_URL}/google-login/login`, {
+        const userResponse = await axios.post(`${config.API_BASE_URL}/google-auth/login`, {
             token: token,  // Send token in the expected format
         });
 

@@ -4,10 +4,8 @@ from app.models.user import User
 from pydantic import BaseModel
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt import create_access_token, admin_required, get_current_user
-import google.auth
 from google.auth.transport.requests import Request
 from fastapi.security import OAuth2PasswordBearer
-import requests
 
 router = APIRouter()
 
