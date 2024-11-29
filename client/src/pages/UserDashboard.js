@@ -21,9 +21,9 @@ const UserDashboard = () => {
             </div>
             {/* Feed Section */}
             <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
-              <div className="flex justify-between items-center mb-6">
-                <Feed />
-              </div>
+              
+              <Feed />
+              
             </div>
           </div>
         </div>
