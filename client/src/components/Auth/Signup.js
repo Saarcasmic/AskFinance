@@ -54,6 +54,8 @@ const Signup = () => {
                   <input
                     type="text"
                     placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="w-full p-4 pl-12 border-2 border-white/20 rounded-lg 
                              bg-white/10 backdrop-blur-sm 
                              focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
@@ -68,6 +70,8 @@ const Signup = () => {
                   <input
                     type="email"
                     placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full p-4 pl-12 border-2 border-white/20 rounded-lg 
                              bg-white/10 backdrop-blur-sm 
                              focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
@@ -82,6 +86,9 @@ const Signup = () => {
                   <input
                     type="password"
                     placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+
                     className="w-full p-4 pl-12 border-2 border-white/20 rounded-lg 
                              bg-white/10 backdrop-blur-sm 
                              focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
@@ -93,6 +100,7 @@ const Signup = () => {
                 {/* Submit button */}
                 <button
                   type="submit"
+
                   className="w-full py-4 bg-green-400 text-white rounded-lg text-lg font-semibold
                            transition duration-300 hover:bg-green-300 hover:shadow-lg
                            focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
