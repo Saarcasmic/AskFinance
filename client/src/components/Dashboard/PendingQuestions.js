@@ -89,68 +89,87 @@ const PendingQuestions = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Your Pending Questions
-        </h1>
-        {pendingQuestions.length > 0 ? (
-          pendingQuestions.map((question) => (
-            <div
-              key={question._id}
-              className="bg-white shadow-sm border border-gray-200 rounded-lg p-4 mb-6"
-            >
-              {/* Question Title */}
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                {question.title}
-              </h3>
+    <div className="min-h-screen bg-gradient-to-b from-green-500 via-green-600 to-green-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative">
+          {/* Decorative background */}
+          <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
+            <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-100 to-green-200"></div>
+            <div className="blur-[106px] h-32 bg-gradient-to-r from-green-200 to-yellow-100"></div>
+          </div>
 
-              {/* Question Description */}
-              <p className="text-gray-700 text-sm mb-4">{question.description}</p>
+          {/* Main Content */}
+          <div className="relative space-y-6">
+            <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
+              <h1 className="text-4xl font-extrabold text-white text-center mb-8">
+                Your Pending Questions
+              </h1>
 
-              {/* Buttons and Actions */}
-              <div className="flex items-center justify-between">
-                {/* Comments Toggle Button */}
-                <button
-                  className="text-blue-600 font-semibold hover:text-blue-800 transition"
-                  onClick={() => handleToggleComments(question._id)}
-                >
-                  {expandedComments === question._id
-                    ? "Hide Comments"
-                    : "Comments"}
-                </button>
+              {pendingQuestions.length > 0 ? (
+                pendingQuestions.map((question) => (
+                  <div
+                    key={question._id}
+                    className="bg-white/20 backdrop-blur-md shadow-lg border border-white/10 rounded-lg p-6 mb-8 transition hover:scale-[1.02] hover:shadow-2xl"
+                  >
+                    {/* Question Title */}
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      {question.title}
+                    </h3>
 
-                {/* Edit and Delete Buttons */}
-                {(isAdmin ||
-                  question.user_id ===
-                    decodeJwt(localStorage.getItem("token"))?.user_id) && (
-                  <div className="flex gap-4">
-                    <button
-                      className="text-red-600 hover:text-red-900 transition"
-                      onClick={() => handleDelete(question._id)}
-                    >
-                      Delete
-                    </button>
+                    {/* Question Description */}
+                    <p className="text-gray-200 text-sm mb-4">
+                      {question.description}
+                    </p>
+
+                    {/* Buttons and Actions */}
+                    <div className="flex items-center justify-between">
+                      {/* Comments Toggle Button */}
+                      <button
+                        className="text-yellow-200 font-semibold hover:text-yellow-400 transition"
+                        onClick={() => handleToggleComments(question._id)}
+                      >
+                        {expandedComments === question._id
+                          ? "Hide Comments"
+                          : "Comments"}
+                      </button>
+
+                      {/* Edit and Delete Buttons */}
+                      {(isAdmin ||
+                        question.user_id ===
+                          decodeJwt(localStorage.getItem("token"))?.user_id) && (
+                        <div className="flex gap-4">
+                          <button
+                            className="text-red-400 hover:text-red-600 transition"
+                            onClick={() => handleDelete(question._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Conditionally Render Comment Section */}
+                    {expandedComments === question._id && (
+                      <div className="mt-6">
+                        <CommentSection
+                          questionId={question._id}
+                          isAdmin={isAdmin}
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-
-              {/* Conditionally Render Comment Section */}
-              {expandedComments === question._id && (
-                <div className="mt-4">
-                  <CommentSection
-                    questionId={question._id}
-                    isAdmin={isAdmin}
-                  />
-                </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-100">
+                  No pending questions available.
+                </p>
               )}
             </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500">No pending questions available.</p>
-        )}
+          </div>
+        </div>
       </div>
     </div>
+
   );
 };
 
