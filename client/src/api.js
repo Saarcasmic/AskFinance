@@ -32,7 +32,8 @@ export const postQuestion = (data) => API.post(`/questions`, data);
 
 export const getPendingQuestions = async (userId) => {
   try {
-    const response = await API.get(`/questions/pending?user_id=${userId}`);
+    // Check if the user is an admin, and pass null if they are
+    const response = await API.get(`/questions/pending?user_id=${userId || null}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching pending questions", error);

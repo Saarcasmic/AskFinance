@@ -65,17 +65,15 @@ async def delete_question(question_id: str):
         raise HTTPException(status_code=500, detail="An error occurred while deleting the question")
 
 @router.get("/pending")
-async def get_pending_questions(user_id: str):
+async def get_pending_questions(user_id: str = None):
     try:
-        # Print out the user_id and the query to check if they match correctly
-        # print(f"Fetching pending questions for user_id: {user_id}")
-
-        # Query MongoDB for questions with approved: false and the correct user_id
-        questions = list(db.questions.find({"approved": False, "user_id": user_id}))
+        # If user_id is None or empty, fetch all pending questions
+        if user_id:
+            questions = list(db.questions.find({"approved": False, "user_id": user_id}))
+        else:
+            questions = list(db.questions.find({"approved": False}))  # No user_id filter for admins
         
-        # Print the questions to debug
-        # print(f"Found questions: {questions}")
-
+        # Convert to JSON if necessary
         return {"questions": [to_json(question) for question in questions]}
     except Exception as e:
         print("Error occurred:", e)
@@ -134,14 +132,6 @@ async def get_feed():
         print("Error occurred:", e)
         raise HTTPException(status_code=500, detail="An error occurred while fetching the feed")
 
-@router.get("/pending")
-async def get_user_pending_questions(user_id: str):
-    try:
-        questions = list(db.questions.find({"user_id": user_id, "approved": False}))
-        return {"pending_questions": [to_json(question) for question in questions]}
-    except Exception as e:
-        print("Error occurred:", e)
-        raise HTTPException(status_code=500, detail="An error occurred while fetching pending questions")
 
 @router.put("/{question_id}/edit")
 async def edit_question(question_id: str, updated_data: dict):
