@@ -10,6 +10,8 @@ const Feed = () => {
   const [expandedComments, setExpandedComments] = useState(null);
   const [error, setError] = useState("");
   const { isAdmin } = useContext(AuthContext);
+  const [filteredQuestions, setFilteredQuestions] = useState([]);
+  const [searchTag, setSearchTag] = useState(""); // New state for search input
 
   const decodeJwt = (token) => {
     if (!token) return null;
@@ -46,6 +48,23 @@ const Feed = () => {
     };
     fetchQuestions();
   }, []);
+
+  const handleTagSearch = (e) => {
+    setSearchTag(e.target.value);
+    if (e.target.value === "") {
+      setFilteredQuestions(questions); // Reset to all questions if search is cleared
+    } else {
+      // Filter questions by tags
+      setFilteredQuestions(
+        questions.filter((question) =>
+          question.tags.some((tag) =>
+            tag.toLowerCase().includes(e.target.value.toLowerCase())
+          )
+        )
+      );
+    }
+  };
+
 
   const handleDelete = async (questionId) => {
     const confirmed = window.confirm("Are you sure you want to delete this question?");
@@ -161,8 +180,19 @@ const Feed = () => {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Approved Questions
         </h1>
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        <SearchAndFilter />
+        <div className="mb-6">
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="Search by tags..."
+            value={searchTag}
+            onChange={handleTagSearch}
+          />
+        </div>
+        {filteredQuestions.length > 0 ? (
+          filteredQuestions.map((question) => (
+            // ... your existing question rendering code ...
             <div key={question._id} className="bg-white shadow-md rounded-lg p-4 mb-6">
               {editingQuestionId === question._id ? (
                 <>
@@ -267,8 +297,14 @@ const Feed = () => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No approved questions available.</p>
+          <p className="text-center text-gray-500">
+            {questions.length > 0 
+              ? "No questions match your search criteria."
+              : "No approved questions available."}
+          </p>
         )}
+        
+        
       </div>
     </div>
   );
