@@ -1,7 +1,6 @@
 import React from "react";
 import Feed from "../components/Dashboard/Feed";
 import PostQuestion from "../components/Dashboard/PostQuestion";
-import { MessageSquarePlus, ThumbsUp, ThumbsDown, MessageCircle, Edit2, Trash2, Filter, Search } from 'lucide-react';
 
 const UserDashboard = () => {
   return (
