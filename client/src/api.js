@@ -62,12 +62,22 @@ export const editQuestion = async (questionId, updatedData) => {
   }
 };
 
-export const likeQuestion = (questionId) => 
-  axios.post(`${config.API_BASE_URL}/questions/${questionId}/like`, {}, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+export const likeQuestion = async (questionId) => {
+  try {
+    const response = await API.post(`/questions/${questionId}/like`);
+    return response.data;
+  } catch (error) {
+    console.error("Error liking question", error);
+    throw error;
+  }
+};
 
-export const dislikeQuestion = (questionId) => 
-  axios.post(`${config.API_BASE_URL}/questions/${questionId}/dislike`, {}, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+export const dislikeQuestion = async (questionId) => {
+  try {
+    const response = await API.post(`/questions/${questionId}/dislike`);
+    return response.data;
+  } catch (error) {
+    console.error("Error disliking question", error);
+    throw error;
+  }
+};
