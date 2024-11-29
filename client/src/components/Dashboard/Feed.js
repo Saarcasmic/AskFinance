@@ -96,13 +96,14 @@ const Feed = () => {
   const handleLike = async (questionId) => {
     try {
       await likeQuestion(questionId);
+  
       setQuestions(
         questions.map((q) =>
           q._id === questionId
             ? {
                 ...q,
-                likes: [...(q.likes || []), userId],
-                dislikes: q.dislikes.filter((id) => id !== userId),
+                likes: q.likes ? [...q.likes, userId] : [userId], // Ensure likes is initialized
+                dislikes: q.dislikes.filter((id) => id !== userId), // Remove userId from dislikes if present
               }
             : q
         )
@@ -112,17 +113,18 @@ const Feed = () => {
       alert("Failed to like the question.");
     }
   };
-
+  
   const handleDislike = async (questionId) => {
     try {
       await dislikeQuestion(questionId);
+  
       setQuestions(
         questions.map((q) =>
           q._id === questionId
             ? {
                 ...q,
-                dislikes: [...(q.dislikes || []), userId],
-                likes: q.likes.filter((id) => id !== userId),
+                dislikes: q.dislikes ? [...q.dislikes, userId] : [userId], // Ensure dislikes is initialized
+                likes: q.likes.filter((id) => id !== userId), // Remove userId from likes if present
               }
             : q
         )
@@ -132,6 +134,7 @@ const Feed = () => {
       alert("Failed to dislike the question.");
     }
   };
+  
 
   const handleCancel = () => {
     setEditingQuestionId(null);
