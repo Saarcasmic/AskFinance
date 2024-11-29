@@ -3,8 +3,12 @@ from jose import jwt, JWTError
 from fastapi import HTTPException, Depends
 from app.database import db
 from fastapi.security import OAuth2PasswordBearer
+from dotenv import load_dotenv
+import os
 
-SECRET_KEY = "https://jwt.io/#debugger-io?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
