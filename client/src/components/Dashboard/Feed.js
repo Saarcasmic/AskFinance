@@ -237,26 +237,36 @@ const Feed = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen py-6">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+    <div className="bg-gray-50 min-h-screen py-8">
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Title */}
+        <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
           Approved Questions
         </h1>
+
+        {/* Search and Filter Component */}
         <SearchAndFilter />
+
+        {/* Questions Section */}
         {filteredQuestions.length > 0 ? (
           filteredQuestions.map((question) => (
-            // ... your existing question rendering code ...
-            <div key={question._id} className="bg-white shadow-md rounded-lg p-4 mb-6">
+            <div
+              key={question._id}
+              className="bg-white shadow-lg rounded-lg p-6 mb-6 transition-transform transform hover:scale-[1.02] hover:shadow-xl"
+            >
               {editingQuestionId === question._id ? (
                 <>
+                  {/* Edit Form */}
                   <input
                     type="text"
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-3 border border-gray-300 rounded-lg mb-3 text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="Edit Title"
                     value={editForm.title}
                     onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                   />
                   <textarea
-                    className="w-full p-2 border rounded mb-2"
+                    className="w-full p-3 border border-gray-300 rounded-lg mb-3 text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="Edit Description"
                     value={editForm.description}
                     onChange={(e) =>
                       setEditForm({ ...editForm, description: e.target.value })
@@ -264,19 +274,20 @@ const Feed = () => {
                   />
                   <input
                     type="text"
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="Edit Tags (comma-separated)"
                     value={editForm.tags}
                     onChange={(e) => setEditForm({ ...editForm, tags: e.target.value })}
                   />
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <button
-                      className="bg-green-500 text-white px-4 py-2 rounded"
+                      className="bg-green-500 text-white px-5 py-2 rounded-lg shadow hover:bg-green-600 transition"
                       onClick={() => handleSave(question._id)}
                     >
                       Save
                     </button>
                     <button
-                      className="bg-gray-500 text-white px-4 py-2 rounded"
+                      className="bg-gray-500 text-white px-5 py-2 rounded-lg shadow hover:bg-gray-600 transition"
                       onClick={handleCancel}
                     >
                       Cancel
@@ -285,67 +296,76 @@ const Feed = () => {
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-bold text-gray-800 mb-2">{question.title}</h2>
+                  {/* Question Details */}
+                  <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                    {question.title}
+                  </h2>
                   <p className="text-gray-700 mb-4">{question.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-6">
                     {question.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded"
+                        className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between">
-                  {/* Left side: Comments, Like, Dislike */}
-                  <div className="flex gap-4">
-                    <button
-                      className="text-blue-600 font-semibold hover:text-blue-800 transition"
-                      onClick={() => handleToggleComments(question._id)}
-                    >
-                      {expandedComments === question._id ? "Hide Comments" : "Comments"}
-                    </button>
-                    <button
-                      className={`text-green-600 font-semibold ${
-                        question.likes?.includes(userId) ? "text-green-800" : ""
-                      }`}
-                      onClick={() => handleLike(question._id)}
-                    >
-                      👍 {question.likes?.length || 0}
-                    </button>
-                    <button
-                      className={`text-red-600 font-semibold ${
-                        question.dislikes?.includes(userId) ? "text-red-800" : ""
-                      }`}
-                      onClick={() => handleDislike(question._id)}
-                    >
-                      👎 {question.dislikes?.length || 0}
-                    </button>
-                  </div>
 
-                  {/* Right side: Edit and Delete buttons */}
-                  {(isAdmin || question.user_id === userId) && (
-                    <div className="flex gap-2 ml-auto">
+                  {/* Actions (Likes, Comments, Edit, Delete) */}
+                  <div className="flex items-center justify-between">
+                    {/* Left Actions: Comments, Like, Dislike */}
+                    <div className="flex gap-4">
                       <button
-                        className="text-gray-600 hover:text-gray-900"
-                        onClick={() => handleEdit(question)}
+                        className="text-blue-600 font-semibold hover:text-blue-800 transition"
+                        onClick={() => handleToggleComments(question._id)}
                       >
-                        Edit
+                        {expandedComments === question._id
+                          ? "Hide Comments"
+                          : "Comments"}
                       </button>
                       <button
-                        className="text-red-600 hover:text-red-900"
-                        onClick={() => handleDelete(question._id)}
+                        className={`text-green-600 font-semibold transition ${
+                          question.likes?.includes(userId) ? "text-green-800" : ""
+                        }`}
+                        onClick={() => handleLike(question._id)}
                       >
-                        Delete
+                        👍 {question.likes?.length || 0}
+                      </button>
+                      <button
+                        className={`text-red-600 font-semibold transition ${
+                          question.dislikes?.includes(userId) ? "text-red-800" : ""
+                        }`}
+                        onClick={() => handleDislike(question._id)}
+                      >
+                        👎 {question.dislikes?.length || 0}
                       </button>
                     </div>
-                  )}
-                </div>
 
+                    {/* Right Actions: Edit, Delete (for Admin or Owner) */}
+                    {(isAdmin || question.user_id === userId) && (
+                      <div className="flex gap-3">
+                        <button
+                          className="text-gray-600 hover:text-gray-900 transition"
+                          onClick={() => handleEdit(question)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-600 hover:text-red-900 transition"
+                          onClick={() => handleDelete(question._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
+                  {/* Comments Section */}
                   {expandedComments === question._id && (
-                    <div className="mt-4">
+                    <div className="mt-6">
                       <CommentSection questionId={question._id} isAdmin={isAdmin} />
                     </div>
                   )}
@@ -354,16 +374,15 @@ const Feed = () => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">
-            {questions.length > 0 
+          <p className="text-center text-gray-500 mt-12">
+            {questions.length > 0
               ? "No questions match your search criteria."
               : "No approved questions available."}
           </p>
         )}
-        
-        
       </div>
     </div>
+
   );
 };
 

@@ -54,89 +54,119 @@ const PostQuestion = () => {
 
   return (
     <div className="relative">
-      {/* Collapsed State */}
-      {!isDialogOpen && (
-        <div
-          className="bg-white p-3 rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-lg"
-          onClick={() => setIsDialogOpen(true)}
+    {/* Collapsed State */}
+    {!isDialogOpen && (
+      <div
+        className="bg-gray-50 p-4 rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-lg hover:bg-gray-100 transition-all"
+        onClick={() => setIsDialogOpen(true)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-blue-500 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-600 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-
-          
-          <input
-            type="text"
-            placeholder="What do you want to talk about?"
-            className="w-full border-none outline-none text-gray-600 bg-transparent"
-            readOnly
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
           />
-        </div>
-      )}
+        </svg>
 
-      {/* Expanded State (Modal Dialog) */}
-      {isDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-lg shadow-lg relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
-              onClick={() => setIsDialogOpen(false)}
+        <input
+          type="text"
+          placeholder="What do you want to talk about?"
+          className="w-full border-none outline-none text-gray-600 bg-transparent placeholder-gray-500"
+          readOnly
+        />
+      </div>
+    )}
+
+    {/* Expanded State (Modal Dialog) */}
+    {isDialogOpen && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-6 rounded-lg w-full max-w-lg shadow-xl relative">
+          {/* Close Button */}
+          <button
+            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
+            onClick={() => setIsDialogOpen(false)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              &times;
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Modal Header */}
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+            Create a Post
+          </h2>
+
+          {/* Form */}
+          <form onSubmit={handlePost}>
+            {/* Title Input */}
+            <input
+              type="text"
+              placeholder="Enter your question title"
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            {/* Description Textarea */}
+            <textarea
+              placeholder="Enter your question description"
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="4"
+            />
+
+            {/* Tags Input */}
+            <input
+              type="text"
+              placeholder="Enter tags (comma-separated)"
+              className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+            />
+
+            {/* Approved Checkbox */}
+            <label className="flex items-center mb-6 text-gray-700">
+              <input
+                type="checkbox"
+                checked={approved}
+                onChange={(e) => setApproved(e.target.checked)}
+                className="mr-2 h-5 w-5 text-blue-600 focus:ring-blue-500 focus:ring-2 border-gray-300 rounded"
+              />
+              Approved
+            </label>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-3 px-4 rounded-lg w-full font-medium hover:bg-blue-700 transition-all focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              Post
             </button>
-            <h2 className="text-xl font-semibold mb-4">Create a Post</h2>
-            <form onSubmit={handlePost}>
-              <input
-                type="text"
-                placeholder="Enter your question title"
-                className="w-full p-2 mb-3 border border-gray-300 rounded-md"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <textarea
-                placeholder="Enter your question description"
-                className="w-full p-2 mb-3 border border-gray-300 rounded-md"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Enter tags (comma-separated)"
-                className="w-full p-2 mb-3 border border-gray-300 rounded-md"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
-              <label className="flex items-center mb-3">
-                <input
-                  type="checkbox"
-                  checked={approved}
-                  onChange={(e) => setApproved(e.target.checked)}
-                  className="mr-2"
-                />
-                Approved
-              </label>
-              <button
-                type="submit"
-                className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 w-full"
-              >
-                Post
-              </button>
-            </form>
-          </div>
+          </form>
         </div>
-      )}
-    </div>
+      </div>
+    )}
+  </div>
+
   );
 };
 
