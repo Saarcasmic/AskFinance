@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthContext"; // Import AuthContext
 
 const Navbar = () => {
-  const { isLoggedIn, setIsLoggedIn, isAdmin } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, isAdmin, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -12,6 +12,10 @@ const Navbar = () => {
     navigate("/login"); // Redirect to login
     window.location.reload(); // Reload the app to reset state
   };
+
+  if (loading) {
+    return null; // Don't render anything if loading
+  }
 
   return (
     <nav className="flex justify-between items-center p-4 bg-green-500 text-white shadow-lg">
