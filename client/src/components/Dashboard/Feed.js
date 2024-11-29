@@ -232,10 +232,6 @@ const Feed = () => {
                     >
                       👎 {question.dislikes?.length || 0}
                     </button>
-                    
-                    <button className="text-gray-600 font-semibold">
-                      {question.likes?.length - question.dislikes?.length || 0}
-                    </button>
 
                     {(isAdmin || question.user_id === userId) && (
                       <div className="flex gap-2">
