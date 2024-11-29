@@ -96,44 +96,51 @@ const Feed = () => {
   const handleLike = async (questionId) => {
     try {
       await likeQuestion(questionId);
-  
-      setQuestions(
-        questions.map((q) =>
-          q._id === questionId
-            ? {
-                ...q,
-                likes: q.likes ? [...q.likes, userId] : [userId], // Ensure likes is initialized
-                dislikes: q.dislikes.filter((id) => id !== userId), // Remove userId from dislikes if present
-              }
-            : q
-        )
-      );
+      
+      setQuestions(questions.map((q) => {
+        if (q._id === questionId) {
+          // Initialize arrays if they don't exist
+          const currentLikes = Array.isArray(q.likes) ? q.likes : [];
+          const currentDislikes = Array.isArray(q.dislikes) ? q.dislikes : [];
+          
+          return {
+            ...q,
+            likes: currentLikes.includes(userId) ? currentLikes : [...currentLikes, userId],
+            dislikes: currentDislikes.filter(id => id !== userId)
+          };
+        }
+        return q;
+      }));
     } catch (err) {
       console.error("Error liking the question:", err);
       alert("Failed to like the question.");
     }
   };
-  
+
   const handleDislike = async (questionId) => {
     try {
       await dislikeQuestion(questionId);
-  
-      setQuestions(
-        questions.map((q) =>
-          q._id === questionId
-            ? {
-                ...q,
-                dislikes: q.dislikes ? [...q.dislikes, userId] : [userId], // Ensure dislikes is initialized
-                likes: q.likes.filter((id) => id !== userId), // Remove userId from likes if present
-              }
-            : q
-        )
-      );
+      
+      setQuestions(questions.map((q) => {
+        if (q._id === questionId) {
+          // Initialize arrays if they don't exist
+          const currentLikes = Array.isArray(q.likes) ? q.likes : [];
+          const currentDislikes = Array.isArray(q.dislikes) ? q.dislikes : [];
+          
+          return {
+            ...q,
+            dislikes: currentDislikes.includes(userId) ? currentDislikes : [...currentDislikes, userId],
+            likes: currentLikes.filter(id => id !== userId)
+          };
+        }
+        return q;
+      }));
     } catch (err) {
       console.error("Error disliking the question:", err);
       alert("Failed to dislike the question.");
     }
   };
+  
   
 
   const handleCancel = () => {
