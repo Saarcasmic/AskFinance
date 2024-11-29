@@ -42,7 +42,7 @@ const PendingQuestions = () => {
         }
 
         const userId = decodedToken.user_id;
-        const response = await getPendingQuestions(userId);
+        const response = await getPendingQuestions(isAdmin ? null : userId);
 
         if (Array.isArray(response.questions)) {
           setPendingQuestions(response.questions);
@@ -56,7 +56,7 @@ const PendingQuestions = () => {
     };
 
     fetchQuestions();
-  }, []);
+  }, [isAdmin]);
 
   const handleToggleComments = (questionId) => {
     setExpandedComments((prev) => (prev === questionId ? null : questionId));
