@@ -237,8 +237,8 @@ const Feed = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
+    
+      <div >
         <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
           Approved Questions
         </h1>
@@ -394,9 +394,6 @@ const Feed = () => {
           </p>
         )}
       </div>
-    </div>
-
-
   );
 };
 
