@@ -5,13 +5,15 @@ import { AuthContext } from "../../AuthContext";
 
 const Feed = () => {
   const [questions, setQuestions] = useState([]);
+  const [filteredQuestions, setFilteredQuestions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
   const [editingQuestionId, setEditingQuestionId] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", description: "", tags: "" });
   const [expandedComments, setExpandedComments] = useState(null);
   const [error, setError] = useState("");
   const { isAdmin } = useContext(AuthContext);
-  const [filteredQuestions, setFilteredQuestions] = useState([]);
-  const [searchTag, setSearchTag] = useState(""); // New state for search input
 
   const decodeJwt = (token) => {
     if (!token) return null;
@@ -38,8 +40,17 @@ const Feed = () => {
             (question) => question.approved === true
           );
           setQuestions(approvedQuestions);
+          setFilteredQuestions(approvedQuestions);
+          
+          // Extract unique tags
+          const tags = new Set();
+          approvedQuestions.forEach(question => {
+            question.tags.forEach(tag => tags.add(tag));
+          });
+          setAvailableTags(Array.from(tags));
         } else {
           setQuestions([]);
+          setFilteredQuestions([]);
         }
       } catch (err) {
         setError("Failed to load questions. Please try again.");
@@ -49,21 +60,72 @@ const Feed = () => {
     fetchQuestions();
   }, []);
 
-  const handleTagSearch = (e) => {
-    setSearchTag(e.target.value);
-    if (e.target.value === "") {
-      setFilteredQuestions(questions); // Reset to all questions if search is cleared
-    } else {
-      // Filter questions by tags
-      setFilteredQuestions(
-        questions.filter((question) =>
-          question.tags.some((tag) =>
-            tag.toLowerCase().includes(e.target.value.toLowerCase())
-          )
-        )
-      );
-    }
+  // New search and filter functionality
+  useEffect(() => {
+    const filterQuestions = () => {
+      let filtered = [...questions];
+
+      // Filter by search term
+      if (searchTerm) {
+        filtered = filtered.filter(question =>
+          question.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          question.description.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      // Filter by selected tags
+      if (selectedTags.length > 0) {
+        filtered = filtered.filter(question =>
+          selectedTags.every(tag => question.tags.includes(tag))
+        );
+      }
+
+      setFilteredQuestions(filtered);
+    };
+
+    filterQuestions();
+  }, [searchTerm, selectedTags, questions]);
+
+  const handleTagSelect = (tag) => {
+    setSelectedTags(prev => 
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
   };
+
+  // Search component
+  const SearchAndFilter = () => (
+    <div className="mb-6">
+      <div className="bg-white shadow-md rounded-lg p-4">
+        <input
+          type="text"
+          placeholder="Search questions..."
+          className="w-full p-2 border rounded mb-4"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">Filter by tags:</h3>
+          <div className="flex flex-wrap gap-2">
+            {availableTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => handleTagSelect(tag)}
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedTags.includes(tag)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
 
   const handleDelete = async (questionId) => {
