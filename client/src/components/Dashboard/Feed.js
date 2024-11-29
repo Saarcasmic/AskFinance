@@ -298,48 +298,51 @@ const Feed = () => {
                     ))}
                   </div>
                   <div className="flex items-center justify-between">
+                  {/* Left side: Comments, Like, Dislike */}
+                  <div className="flex gap-4">
                     <button
                       className="text-blue-600 font-semibold hover:text-blue-800 transition"
                       onClick={() => handleToggleComments(question._id)}
                     >
                       {expandedComments === question._id ? "Hide Comments" : "Comments"}
                     </button>
-                    <div className="flex gap-4 ml-auto">
+                    <button
+                      className={`text-green-600 font-semibold ${
+                        question.likes?.includes(userId) ? "text-green-800" : ""
+                      }`}
+                      onClick={() => handleLike(question._id)}
+                    >
+                      👍 {question.likes?.length || 0}
+                    </button>
+                    <button
+                      className={`text-red-600 font-semibold ${
+                        question.dislikes?.includes(userId) ? "text-red-800" : ""
+                      }`}
+                      onClick={() => handleDislike(question._id)}
+                    >
+                      👎 {question.dislikes?.length || 0}
+                    </button>
+                  </div>
+
+                  {/* Right side: Edit and Delete buttons */}
+                  {(isAdmin || question.user_id === userId) && (
+                    <div className="flex gap-2 ml-auto">
                       <button
-                        className={`text-green-600 font-semibold ${
-                          question.likes?.includes(userId) ? "text-green-800" : ""
-                        }`}
-                        onClick={() => handleLike(question._id)}
+                        className="text-gray-600 hover:text-gray-900"
+                        onClick={() => handleEdit(question)}
                       >
-                        👍 {question.likes?.length || 0}
+                        Edit
                       </button>
                       <button
-                        className={`text-red-600 font-semibold ${
-                          question.dislikes?.includes(userId) ? "text-red-800" : ""
-                        }`}
-                        onClick={() => handleDislike(question._id)}
+                        className="text-red-600 hover:text-red-900"
+                        onClick={() => handleDelete(question._id)}
                       >
-                        👎 {question.dislikes?.length || 0}
+                        Delete
                       </button>
                     </div>
+                  )}
+                </div>
 
-                    {(isAdmin || question.user_id === userId) && (
-                      <div className="flex gap-2">
-                        <button
-                          className="text-gray-600 hover:text-gray-900"
-                          onClick={() => handleEdit(question)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-600 hover:text-red-900"
-                          onClick={() => handleDelete(question._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
 
                   {expandedComments === question._id && (
                     <div className="mt-4">
