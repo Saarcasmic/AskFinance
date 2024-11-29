@@ -248,12 +248,11 @@ const Feed = () => {
         <SearchAndFilter />
 
         {/* Questions Section */}
-        {filteredQuestions.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredQuestions.map((question) => (
+        {filteredQuestions.length > 0 ? 
+            filteredQuestions.map((question) => (
               <div
                 key={question._id}
-                className="bg-white shadow-lg rounded-lg p-6 transition-transform transform hover:scale-[1.02] hover:shadow-xl"
+                className="bg-white/80 backdrop-blur-sm shadow-md border border-gray-200 rounded-lg p-6 mb-8 transition hover:shadow-lg"
               >
                 {editingQuestionId === question._id ? (
                   <>
@@ -387,8 +386,7 @@ const Feed = () => {
                   </>
                 )}
               </div>
-            ))}
-          </div>
+            )
         ) : (
           <p className="text-center text-gray-500 mt-12">
             {questions.length > 0
