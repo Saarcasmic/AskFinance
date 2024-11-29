@@ -19,7 +19,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # Sign up route
 @router.post("/signup")
 async def signup(user: User):
-    print("Received:", user)
+    # print("Received:", user)
     existing_user = db.users.find_one({"email": user.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -31,7 +31,6 @@ async def signup(user: User):
 # Traditional login route (email and password)
 @router.post("/login")
 async def login(request: LoginRequest):
-    print("Received Request:", request)
     user = db.users.find_one({"email": request.email})
     if not user or not verify_password(request.password, user["password"]):
         raise HTTPException(status_code=400, detail="Invalid credentials")

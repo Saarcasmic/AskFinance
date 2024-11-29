@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
         .then((response) => {
           setIsLoggedIn(true);
           setIsAdmin(response.data.is_admin); // Assume the API returns `is_admin`
-          console.log("User data:", response.data);
+          
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
