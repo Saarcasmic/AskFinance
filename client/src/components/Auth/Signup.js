@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config from "../../config";
+import { User, Mail, Lock } from 'lucide-react';
 
 const Signup = () => {
   const [username, setUsername] = useState(""); 
