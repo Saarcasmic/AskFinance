@@ -94,14 +94,14 @@ const PendingQuestions = () => {
         <div className="relative">
           {/* Decorative background */}
           <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
-            <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-100 to-green-200"></div>
-            <div className="blur-[106px] h-32 bg-gradient-to-r from-green-200 to-yellow-100"></div>
+            <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-200 to-green-300"></div>
+            <div className="blur-[106px] h-32 bg-gradient-to-r from-green-300 to-yellow-200"></div>
           </div>
 
           {/* Main Content */}
           <div className="relative space-y-6">
             <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
-              <h1 className="text-4xl font-extrabold text-white text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
                 Your Pending Questions
               </h1>
 
@@ -109,15 +109,15 @@ const PendingQuestions = () => {
                 pendingQuestions.map((question) => (
                   <div
                     key={question._id}
-                    className="bg-white/20 backdrop-blur-md shadow-lg border border-white/10 rounded-lg p-6 mb-8 transition hover:scale-[1.02] hover:shadow-2xl"
+                    className="bg-white/80 backdrop-blur-sm shadow-md border border-gray-200 rounded-lg p-6 mb-8 transition hover:shadow-lg"
                   >
                     {/* Question Title */}
-                    <h3 className="text-xl font-semibold text-white mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
                       {question.title}
                     </h3>
 
                     {/* Question Description */}
-                    <p className="text-gray-200 text-sm mb-4">
+                    <p className="text-gray-700 text-sm mb-4">
                       {question.description}
                     </p>
 
@@ -125,7 +125,7 @@ const PendingQuestions = () => {
                     <div className="flex items-center justify-between">
                       {/* Comments Toggle Button */}
                       <button
-                        className="text-yellow-200 font-semibold hover:text-yellow-400 transition"
+                        className="text-blue-700 font-medium hover:text-blue-900 transition"
                         onClick={() => handleToggleComments(question._id)}
                       >
                         {expandedComments === question._id
@@ -139,7 +139,7 @@ const PendingQuestions = () => {
                           decodeJwt(localStorage.getItem("token"))?.user_id) && (
                         <div className="flex gap-4">
                           <button
-                            className="text-red-400 hover:text-red-600 transition"
+                            className="text-red-600 hover:text-red-800 transition"
                             onClick={() => handleDelete(question._id)}
                           >
                             Delete
@@ -160,7 +160,7 @@ const PendingQuestions = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-gray-100">
+                <p className="text-center text-gray-800">
                   No pending questions available.
                 </p>
               )}
@@ -169,6 +169,7 @@ const PendingQuestions = () => {
         </div>
       </div>
     </div>
+
 
   );
 };
