@@ -92,6 +92,47 @@ const Feed = () => {
     }
   };
 
+
+  const handleLike = async (questionId) => {
+    try {
+      await likeQuestion(questionId);
+      setQuestions(
+        questions.map((q) =>
+          q._id === questionId
+            ? {
+                ...q,
+                likes: [...(q.likes || []), userId],
+                dislikes: q.dislikes.filter((id) => id !== userId),
+              }
+            : q
+        )
+      );
+    } catch (err) {
+      console.error("Error liking the question:", err);
+      alert("Failed to like the question.");
+    }
+  };
+
+  const handleDislike = async (questionId) => {
+    try {
+      await dislikeQuestion(questionId);
+      setQuestions(
+        questions.map((q) =>
+          q._id === questionId
+            ? {
+                ...q,
+                dislikes: [...(q.dislikes || []), userId],
+                likes: q.likes.filter((id) => id !== userId),
+              }
+            : q
+        )
+      );
+    } catch (err) {
+      console.error("Error disliking the question:", err);
+      alert("Failed to dislike the question.");
+    }
+  };
+
   const handleCancel = () => {
     setEditingQuestionId(null);
   };
@@ -171,6 +212,22 @@ const Feed = () => {
                       {expandedComments === question._id
                         ? "Hide Comments"
                         : `Comments`}
+                    </button>
+                    <button
+                      className={`text-green-600 font-semibold ${
+                        question.likes.includes(userId) ? "text-green-800" : ""
+                      }`}
+                      onClick={() => handleLike(question._id)}
+                    >
+                      👍 {question.likes.length}
+                    </button>
+                    <button
+                      className={`text-red-600 font-semibold ${
+                        question.dislikes.includes(userId) ? "text-red-800" : ""
+                      }`}
+                      onClick={() => handleDislike(question._id)}
+                    >
+                      👎 {question.dislikes.length}
                     </button>
                     {(isAdmin || question.user_id === userId) && (
                       <div className="flex gap-2">

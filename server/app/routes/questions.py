@@ -190,37 +190,55 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
 async def test():
     return {"message": "Questions endpoint is working"}
 
-@router.delete("/{comment_id}")
-async def delete_comment(comment_id: str, user: dict = Depends(get_current_user)):
+
+@router.post("/{question_id}/like")
+async def like_question(question_id: str, user: dict = Depends(get_current_user)):
     try:
-        print(f"Received comment_id: {comment_id}")  # Log the raw comment_id
-        
-        # Convert the comment_id to ObjectId
-        try:
-            comment_object_id = ObjectId(comment_id)
-            print(f"Converted comment_id to ObjectId: {comment_object_id}")
-        except Exception as e:
-            print(f"Failed to convert comment_id: {e}")
-            raise HTTPException(status_code=400, detail="Invalid comment ID format")
-        
-        # Fetch the comment from the database
-        comment = db.comments.find_one({"_id": comment_object_id})
-        print(f"Fetched comment from DB: {comment}")
-        if not comment:
-            raise HTTPException(status_code=404, detail="Comment not found")
+        question = db.questions.find_one({"_id": ObjectId(question_id)})
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found")
 
-        # Check if the user is authorized to delete the comment
-        if comment["user_id"] != str(user["_id"]) and not user.get("is_admin"):
-            raise HTTPException(status_code=403, detail="You are not allowed to delete this comment")
+        user_id = str(user["_id"])
 
-        # Delete the comment
-        result = db.comments.delete_one({"_id": comment_object_id})
-        print(f"Delete result: {result.deleted_count}")
-        if result.deleted_count == 0:
-            raise HTTPException(status_code=404, detail="Comment not found during deletion")
+        # Remove user from dislikes if they already disliked
+        db.questions.update_one(
+            {"_id": ObjectId(question_id)},
+            {"$pull": {"dislikes": user_id}}
+        )
 
-        return {"message": "Comment deleted successfully"}
-
+        # Add user to likes if not already liked
+        if user_id not in question.get("likes", []):
+            db.questions.update_one(
+                {"_id": ObjectId(question_id)},
+                {"$addToSet": {"likes": user_id}}
+            )
+        return {"message": "Liked successfully"}
     except Exception as e:
-        print(f"Error during comment deletion: {e}")
-        raise HTTPException(status_code=500, detail="An error occurred while deleting the comment")
+        print("Error occurred:", e)
+        raise HTTPException(status_code=500, detail="An error occurred while liking the question")
+
+@router.post("/{question_id}/dislike")
+async def dislike_question(question_id: str, user: dict = Depends(get_current_user)):
+    try:
+        question = db.questions.find_one({"_id": ObjectId(question_id)})
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found")
+
+        user_id = str(user["_id"])
+
+        # Remove user from likes if they already liked
+        db.questions.update_one(
+            {"_id": ObjectId(question_id)},
+            {"$pull": {"likes": user_id}}
+        )
+
+        # Add user to dislikes if not already disliked
+        if user_id not in question.get("dislikes", []):
+            db.questions.update_one(
+                {"_id": ObjectId(question_id)},
+                {"$addToSet": {"dislikes": user_id}}
+            )
+        return {"message": "Disliked successfully"}
+    except Exception as e:
+        print("Error occurred:", e)
+        raise HTTPException(status_code=500, detail="An error occurred while disliking the question")
