@@ -302,26 +302,26 @@ const Feed = () => {
                       className="text-blue-600 font-semibold hover:text-blue-800 transition"
                       onClick={() => handleToggleComments(question._id)}
                     >
-                      {expandedComments === question._id
-                        ? "Hide Comments"
-                        : `Comments`}
+                      {expandedComments === question._id ? "Hide Comments" : "Comments"}
                     </button>
-                    <button
-                      className={`text-green-600 font-semibold ${
-                        question.likes?.includes(userId) ? "text-green-800" : ""
-                      }`}
-                      onClick={() => handleLike(question._id)}
-                    >
-                      👍 {question.likes?.length || 0}
-                    </button>
-                    <button
-                      className={`text-red-600 font-semibold ${
-                        question.dislikes?.includes(userId) ? "text-red-800" : ""
-                      }`}
-                      onClick={() => handleDislike(question._id)}
-                    >
-                      👎 {question.dislikes?.length || 0}
-                    </button>
+                    <div className="flex gap-4 ml-auto">
+                      <button
+                        className={`text-green-600 font-semibold ${
+                          question.likes?.includes(userId) ? "text-green-800" : ""
+                        }`}
+                        onClick={() => handleLike(question._id)}
+                      >
+                        👍 {question.likes?.length || 0}
+                      </button>
+                      <button
+                        className={`text-red-600 font-semibold ${
+                          question.dislikes?.includes(userId) ? "text-red-800" : ""
+                        }`}
+                        onClick={() => handleDislike(question._id)}
+                      >
+                        👎 {question.dislikes?.length || 0}
+                      </button>
+                    </div>
 
                     {(isAdmin || question.user_id === userId) && (
                       <div className="flex gap-2">
@@ -340,6 +340,7 @@ const Feed = () => {
                       </div>
                     )}
                   </div>
+
                   {expandedComments === question._id && (
                     <div className="mt-4">
                       <CommentSection questionId={question._id} isAdmin={isAdmin} />
