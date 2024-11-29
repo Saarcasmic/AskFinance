@@ -59,26 +59,32 @@ async def google_login(request: GoogleLoginRequest):
 
         # Parse user info
         user_info = response.json()
-
-        # Handle user creation/login in your database
         email = user_info.get("email")
         if not email:
             raise HTTPException(status_code=400, detail="Email not provided by Google")
 
-        # Simulated user check/creation
+        # Check if the user already exists in the database
         existing_user = db.users.find_one({"email": email})
+
         if not existing_user:
-            new_user = User(email=email, username=user_info.get("name", "Google User"))
+            # If the user does not exist, create a new one
+            new_user = User(
+                email=email,
+                username=user_info.get("name", "Google User"),
+                password=None  # Password is not required for Google-authenticated users
+            )
             db.users.insert_one(new_user.dict())
-            existing_user = new_user
+            existing_user = new_user.dict()
 
         # Generate access token
         access_token = create_access_token(
-            data={"sub": existing_user.email, "user_id": str(existing_user["_id"])}
+            data={"sub": existing_user["email"], "user_id": str(existing_user["_id"])}
         )
         return {"access_token": access_token, "token_type": "bearer"}
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Google login failed: {str(e)}")
+
 
 # Helper function to fetch user info from Google
 async def get_google_user_info(token: str):
