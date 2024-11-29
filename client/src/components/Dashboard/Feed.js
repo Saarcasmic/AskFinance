@@ -243,15 +243,6 @@ const Feed = () => {
           Approved Questions
         </h1>
         <SearchAndFilter />
-        <div className="mb-6">
-          <input
-            type="text"
-            className="w-full p-2 border rounded"
-            placeholder="Search by tags..."
-            value={searchTag}
-            onChange={handleTagSearch}
-          />
-        </div>
         {filteredQuestions.length > 0 ? (
           filteredQuestions.map((question) => (
             // ... your existing question rendering code ...
