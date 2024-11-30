@@ -4,6 +4,7 @@ from app.database import db
 from app.models.user import User
 from app.utils.jwt import create_access_token
 import requests
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -15,7 +16,7 @@ class GoogleLoginRequest(BaseModel):
 async def google_login(request: GoogleLoginRequest):
     try:
         token = request.token
-        print("Received token:", token)  # Debugging log
+        print("Received token:", token)
 
         # Verify the Google token
         url = "https://oauth2.googleapis.com/tokeninfo"
@@ -24,7 +25,7 @@ async def google_login(request: GoogleLoginRequest):
 
         # Parse user info
         user_info = response.json()
-        print("Google user info:", user_info)  # Debugging log
+        print("Google user info:", user_info)
 
         email = user_info.get("email")
         if not email:
@@ -32,32 +33,42 @@ async def google_login(request: GoogleLoginRequest):
 
         # Check if the user already exists in the database
         existing_user = db.users.find_one({"email": email})
-        print("Existing user:", existing_user)  # Debugging log
+        print("Existing user:", existing_user)
 
         if not existing_user:
             # Create a new user
-            print("Creating new user for email:", email)  # Debugging log
-            new_user = User(
-                email=email,
-                username=user_info.get("name", "Google User"),
-                password=None,
-                is_admin=False,
-            )
+            print("Creating new user for email:", email)
+            new_user_data = {
+                "email": email,
+                "username": user_info.get("name", "Google User"),
+                "password": None,
+                "is_admin": False,
+                "_id": ObjectId()
+            }
             
-            db.users.insert_one(new_user.model_dump())  # Use `model_dump()` here
-            existing_user = new_user.model_dump()
+            # Insert the new user
+            db.users.insert_one(new_user_data)
+            existing_user = new_user_data
             print("New user created:", existing_user)
-            
 
         # Generate access token
         access_token = create_access_token(
-            data={"sub": existing_user["email"], "user_id": str(existing_user["_id"])}
+            data={
+                "sub": existing_user["email"],
+                "user_id": str(existing_user["_id"])
+            }
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "email": existing_user["email"],
+                "username": existing_user["username"],
+                "is_admin": existing_user["is_admin"]
+            }
+        }
 
     except Exception as e:
-        print("Error during Google login:", e)  # Debugging log
-        raise HTTPException(status_code=400, detail=f"Google login failed: {str(e)}")
-
-    except Exception as e:
+        print("Error during Google login:", e)
         raise HTTPException(status_code=400, detail=f"Google login failed: {str(e)}")
