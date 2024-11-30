@@ -42,8 +42,8 @@ async def google_login(request: GoogleLoginRequest):
                 username=user_info.get("name", "Google User"),
                 password=None,
             )
-            db.users.insert_one(new_user.dict())
-            existing_user = new_user.dict()
+            db.users.insert_one(new_user.model_dump())
+            existing_user = new_user.model_dump()
 
         # Generate access token
         access_token = create_access_token(
