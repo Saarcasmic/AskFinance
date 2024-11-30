@@ -25,7 +25,6 @@ async def google_login(request: GoogleLoginRequest):
 
         # Parse user info
         user_info = response.json()
-        print("Google user info:", user_info)
 
         email = user_info.get("email")
         if not email:
@@ -33,11 +32,9 @@ async def google_login(request: GoogleLoginRequest):
 
         # Check if the user already exists in the database
         existing_user = db.users.find_one({"email": email})
-        print("Existing user:", existing_user)
 
         if not existing_user:
             # Create a new user
-            print("Creating new user for email:", email)
             new_user_data = {
                 "email": email,
                 "username": user_info.get("name", "Google User"),
@@ -49,7 +46,6 @@ async def google_login(request: GoogleLoginRequest):
             # Insert the new user
             db.users.insert_one(new_user_data)
             existing_user = new_user_data
-            print("New user created:", existing_user)
 
         # Generate access token
         access_token = create_access_token(
