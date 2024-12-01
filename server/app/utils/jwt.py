@@ -11,10 +11,14 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 30
 
-def create_access_token(data: dict):
+def create_access_token(data: dict, is_refresh_token: bool = False):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    if is_refresh_token:
+        expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -24,18 +28,17 @@ def verify_token(token: str):
         return payload
     except JWTError:
         return None
-    
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")  # Use 'sub' to fetch the email
         if not email:
             raise HTTPException(status_code=403, detail="Invalid token")
         
-        user = db.users.find_one({"email": email})
+        user = await db.users.find_one({"email": email})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user

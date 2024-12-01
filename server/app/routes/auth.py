@@ -195,7 +195,7 @@ async def login(request: Request, credentials: LoginRequest):
             )
             refresh_token = create_access_token(
                 data={"sub": user["email"], "user_id": user["_id"]},
-                expires_delta=timedelta(days=30)
+                is_refresh_token=True
             )
         except Exception as jwt_error:
             print(f"JWT generation error: {jwt_error}")
