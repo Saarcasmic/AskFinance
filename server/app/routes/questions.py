@@ -154,16 +154,22 @@ async def get_feed():
 @router.put("/{question_id}/edit")
 async def edit_question(question_id: str, updated_data: dict):
     try:
-        result = db["questions"].update_one(
+        # Perform the update operation
+        result = await db["questions"].update_one(
             {"_id": ObjectId(question_id)},
             {"$set": updated_data}
         )
+        
+        # Check if any document was matched
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Question not found")
+        
         return {"message": "Question updated successfully"}
+    
     except Exception as e:
         print("Error occurred:", e)
         raise HTTPException(status_code=500, detail="An error occurred while updating the question")
+
 
 @router.delete("/{question_id}")
 async def delete_question(question_id: str, user: dict = Depends(get_current_user)):
@@ -171,8 +177,8 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
         # Convert question_id to ObjectId
         question_object_id = ObjectId(question_id)
 
-        # Fetch the question from the database
-        question = db["questions"].find({"_id": question_object_id})
+        # Fetch the question from the database asynchronously
+        question = await db["questions"].find_one({"_id": question_object_id})
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
@@ -182,8 +188,8 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
         if question["user_id"] != str(user["_id"]) and not user.get("is_admin"):
             raise HTTPException(status_code=403, detail="You are not allowed to delete this question")
 
-        # Delete the question
-        result = db["questions"].delete_one({"_id": question_object_id})
+        # Delete the question asynchronously
+        result = await db["questions"].delete_one({"_id": question_object_id})
         if result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="Question not found during deletion")
 
@@ -192,6 +198,7 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
     except Exception as e:
         print(f"Error during question deletion: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while deleting the question")
+
 
 
 @router.get("/test")
