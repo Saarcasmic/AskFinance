@@ -20,9 +20,16 @@ async def post_question(question: Question):
 
 @router.get("/")
 async def get_questions():
-    questions = list(db.questions.find())  # Fetch all approved questions
-    questions = [to_json(question) for question in questions]  # Convert ObjectId to string
-    return {"questions": questions}
+    try:
+        # Fetch all questions using asynchronous iteration
+        questions_cursor = db["questions"].find()
+        questions = [to_json(question) async for question in questions_cursor]  # Convert ObjectId to string
+        
+        return {"questions": questions}
+    except Exception as e:
+        print(f"Error fetching questions: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while fetching questions")
+
 
 @router.put("/{question_id}/approve")
 async def approve_question(question_id: str):
