@@ -15,6 +15,7 @@ from bson import ObjectId
 import jwt
 from typing import Dict
 from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 import os
 
 load_dotenv()
@@ -150,7 +151,10 @@ async def login(request: Request, credentials: LoginRequest):
         # Find user in database
         user = None
         try:
+            # Using motor's async find_one
             user = await db.users.find_one({"email": credentials.email})
+            if user:
+                user['_id'] = str(user['_id'])  # Convert ObjectId to string
         except Exception as db_error:
             print(f"Database error during login: {db_error}")
             raise HTTPException(
@@ -175,7 +179,7 @@ async def login(request: Request, credentials: LoginRequest):
         
         # Update last login
         await db.users.update_one(
-            {"_id": user["_id"]},
+            {"_id": ObjectId(user["_id"])},
             {
                 "$set": {
                     "last_login": datetime.utcnow(),
@@ -187,10 +191,10 @@ async def login(request: Request, credentials: LoginRequest):
         # Generate tokens
         try:
             access_token = create_access_token(
-                data={"sub": user["email"], "user_id": str(user["_id"])}
+                data={"sub": user["email"], "user_id": user["_id"]}
             )
             refresh_token = create_access_token(
-                data={"sub": user["email"], "user_id": str(user["_id"])},
+                data={"sub": user["email"], "user_id": user["_id"]},
                 expires_delta=timedelta(days=30)
             )
         except Exception as jwt_error:
@@ -213,7 +217,7 @@ async def login(request: Request, credentials: LoginRequest):
             user={
                 "email": user["email"],
                 "username": user["username"],
-                "id": str(user["_id"]),
+                "id": user["_id"],
                 "is_admin": user.get("is_admin", False)
             }
         )
