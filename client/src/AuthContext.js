@@ -15,7 +15,11 @@ const AuthProvider = ({ children }) => {
     if (token) {
       axios
         .get(`${config.API_BASE_URL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            'Authorization': `Bearer ${token}`,  // Make sure token is being passed
+            'Content-Type': 'application/json'
+        },
+        withCredentials: true
         })
         .then((response) => {
           setIsLoggedIn(true);

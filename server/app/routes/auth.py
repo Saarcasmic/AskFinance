@@ -270,15 +270,24 @@ async def refresh_token(request: TokenRefreshRequest):
         )
 
 @router.get("/me")
-@cache(expire=300)  # Cache for 5 minutes
-async def get_current_user_details(user: dict = Depends(get_current_user)):
-    return {
-        "email": user["email"],
-        "username": user["username"],
-        "is_admin": user.get("is_admin", False),
-        "last_login": user.get("last_login"),
-        "account_status": user.get("account_status")
-    }
+async def get_current_user_info(current_user: dict = Depends(get_current_user)):
+    try:
+        # Convert ObjectId to string for JSON serialization
+        if current_user and "_id" in current_user:
+            current_user["_id"] = str(current_user["_id"])
+        
+        return {
+            "email": current_user["email"],
+            "username": current_user.get("username", ""),
+            "id": current_user["_id"],
+            "is_admin": current_user.get("is_admin", False)
+        }
+    except Exception as e:
+        print(f"Error in /me endpoint: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error fetching user information"
+        )
 
 @router.post("/logout")
 async def logout(user: dict = Depends(get_current_user)):
