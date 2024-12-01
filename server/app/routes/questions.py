@@ -118,18 +118,26 @@ async def add_comment(question_id: str, comment: dict, user: dict = Depends(get_
 @router.get("/{question_id}/comments")
 async def get_comments(question_id: str):
     try:
-        comments = list(db.comments.find({"question_id": question_id}))
-        # Enrich comments with user data
+        # Fetch the comments asynchronously
+        comments_cursor = db.comments.find({"question_id": question_id})
+        
+        # Initialize an empty list for enriched comments
         enriched_comments = []
-        for comment in comments:
-            user = db.users.find_one({"_id": ObjectId(comment["user_id"])})
+
+        # Iterate asynchronously through the cursor
+        async for comment in comments_cursor:
+            # Fetch user information for each comment asynchronously
+            user = await db.users.find_one({"_id": ObjectId(comment["user_id"])})
             comment["username"] = user["username"] if user else "Unknown User"
+            
+            # Append enriched comment to the list
             enriched_comments.append(to_json(comment))
 
         return {"comments": enriched_comments}
     except Exception as e:
         print("Error occurred:", e)
         raise HTTPException(status_code=500, detail="An error occurred while fetching comments")
+
 
 
 
@@ -194,7 +202,8 @@ async def test():
 @router.post("/{question_id}/like")
 async def like_question(question_id: str, user: dict = Depends(get_current_user)):
     try:
-        question = db["questions"].find({"_id": ObjectId(question_id)})
+        # Use find_one to fetch a single question
+        question = await db["questions"].find_one({"_id": ObjectId(question_id)})
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
@@ -216,6 +225,7 @@ async def like_question(question_id: str, user: dict = Depends(get_current_user)
     except Exception as e:
         print("Error occurred:", e)
         raise HTTPException(status_code=500, detail="An error occurred while liking the question")
+
 
 @router.post("/{question_id}/dislike")
 async def dislike_question(question_id: str, user: dict = Depends(get_current_user)):
