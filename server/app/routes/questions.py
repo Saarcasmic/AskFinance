@@ -63,7 +63,7 @@ async def reject_question(question_id: str):
 @router.delete("/{question_id}")
 async def delete_question(question_id: str):
     try:
-        result = db["questions"].delete_one({"_id": ObjectId(question_id)})
+        result = await db["questions"].delete_one({"_id": ObjectId(question_id)})
         if result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="Question not found")
         return {"message": "Question deleted successfully"}
@@ -189,17 +189,16 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
         if question["user_id"] != str(user["_id"]) and not user.get("is_admin"):
             raise HTTPException(status_code=403, detail="You are not allowed to delete this question")
 
-        # Delete the question asynchronously
+        # Perform the deletion asynchronously and get the result
         result = await db["questions"].delete_one({"_id": question_object_id})
         
-        # Check if any document was deleted
-        if result.deleted_count == 0:
+        # Verify if the deletion was successful by checking the result
+        if (await result).deleted_count == 0:
             raise HTTPException(status_code=404, detail="Question not found during deletion")
 
         return {"message": "Question deleted successfully"}
 
     except Exception as e:
-        # Log the error
         print(f"Error during question deletion: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while deleting the question")
 
