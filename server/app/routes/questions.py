@@ -179,6 +179,7 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
 
         # Fetch the question from the database asynchronously
         question = await db["questions"].find_one({"_id": question_object_id})
+        
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
@@ -190,14 +191,19 @@ async def delete_question(question_id: str, user: dict = Depends(get_current_use
 
         # Delete the question asynchronously
         result = await db["questions"].delete_one({"_id": question_object_id})
+        
+        # Check if any document was deleted
         if result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="Question not found during deletion")
 
         return {"message": "Question deleted successfully"}
 
     except Exception as e:
+        # Log the error
         print(f"Error during question deletion: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while deleting the question")
+
+
 
 
 
