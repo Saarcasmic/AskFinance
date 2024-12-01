@@ -147,23 +147,33 @@ async def login(request: Request, credentials: LoginRequest):
                 detail="Too many login attempts. Please try again later."
             )
         
-        # Find user and verify credentials
-        user = await db.users.find_one({"email": credentials.email})
-        if not user or not verify_password(credentials.password, user["password"]):
+        # Find user in database
+        user = None
+        try:
+            user = await db.users.find_one({"email": credentials.email})
+        except Exception as db_error:
+            print(f"Database error during login: {db_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Database error occurred"
+            )
+        
+        # Validate user credentials
+        if not user or not user.get("password") or not verify_password(credentials.password, user["password"]):
             await record_login_attempt(credentials.email, False)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid credentials"
             )
-            
+        
         # Check account status
-        if user.get("account_status") != "active":
+        if user.get("account_status", "inactive") != "active":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Account is not active"
             )
         
-        # Update last login and reset failed attempts
+        # Update last login
         await db.users.update_one(
             {"_id": user["_id"]},
             {
@@ -175,15 +185,26 @@ async def login(request: Request, credentials: LoginRequest):
         )
         
         # Generate tokens
-        access_token = create_access_token(
-            data={"sub": user["email"], "user_id": str(user["_id"])}
-        )
-        refresh_token = create_access_token(
-            data={"sub": user["email"], "user_id": str(user["_id"])},
-            expires_delta=timedelta(days=30)
-        )
+        try:
+            access_token = create_access_token(
+                data={"sub": user["email"], "user_id": str(user["_id"])}
+            )
+            refresh_token = create_access_token(
+                data={"sub": user["email"], "user_id": str(user["_id"])},
+                expires_delta=timedelta(days=30)
+            )
+        except Exception as jwt_error:
+            print(f"JWT generation error: {jwt_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Token generation failed"
+            )
         
-        await record_login_attempt(credentials.email, True)
+        # Record successful login
+        try:
+            await record_login_attempt(credentials.email, True)
+        except Exception as record_error:
+            print(f"Error recording login attempt: {record_error}")
         
         return LoginResponse(
             access_token=access_token,
@@ -196,14 +217,16 @@ async def login(request: Request, credentials: LoginRequest):
                 "is_admin": user.get("is_admin", False)
             }
         )
-        
+    
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Unexpected error during login: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during login"
         )
+
 
 @router.post("/refresh-token")
 async def refresh_token(request: TokenRefreshRequest):
