@@ -21,8 +21,13 @@ const Login = () => {
       });
       alert("Login successful");
 
-      const token = response.data.access_token;
-      localStorage.setItem("token", token);
+      const { access_token, refresh_token } = response.data; // Extract refresh_token
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
+
+
+      // const token = response.data.access_token;
+      // localStorage.setItem("token", token);
 
       setIsLoggedIn(true);
 
@@ -33,8 +38,17 @@ const Login = () => {
 
       navigate("/dashboard");
     } catch (error) {
-      alert("Login failed. Please check your credentials.");
+      if (error.response?.status === 429) {
+        alert("Too many login attempts. Please try again later.");
+      } else if (error.response?.status === 401) {
+        alert("Invalid credentials. Please try again.");
+      } else if (error.response?.status === 403) {
+        alert("Your account is inactive. Contact support.");
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
+    
   };
 
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -55,20 +69,33 @@ const Login = () => {
 
         
 
-        const { access_token } = userResponse.data;
-        localStorage.setItem("token", access_token);
+        const { access_token, refresh_token } = userResponse.data; // Extract refresh_token
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
+
         setIsLoggedIn(true);
         navigate("/dashboard");
     } catch (error) {
-        console.error("Google login failed", error);
+      if (error.response?.status === 429) {
+        alert("Too many login attempts. Please try again later.");
+      } else if (error.response?.status === 403) {
+        alert("Your account is inactive. Contact support.");
+      } else {
         alert("Google login failed. Please try again.");
+      }
     }
-};
+    
+  };
+
   // Handle Google login failure
   const handleGoogleLoginFailure = (error) => {
     console.error("Google login error", error);
     alert("Google login failed. Please try again.");
   };
+
+  
+  
+  
 
   return (
     <GoogleOAuthProvider clientId={clientId}>

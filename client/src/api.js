@@ -82,3 +82,37 @@ export const dislikeQuestion = async (questionId) => {
     throw error;
   }
 };
+
+const refreshAccessToken = async () => {
+  try {
+    const refreshToken = localStorage.getItem("refresh_token");
+    const response = await axios.post(`${config.API_BASE_URL}/auth/refresh-token`, {
+      refresh_token: refreshToken,
+    });
+    const { access_token } = response.data;
+    localStorage.setItem("access_token", access_token); // Update the access token
+    return access_token;
+  } catch (error) {
+    console.error("Failed to refresh token:", error);
+    throw error;
+  }
+};
+
+axios.interceptors.response.use(
+  (response) => response, // Pass through for successful responses
+  async (error) => {
+    if (error.response.status === 401) {
+      try {
+        const newAccessToken = await refreshAccessToken();
+        error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return axios(error.config); // Retry the failed request with the new token
+      } catch (refreshError) {
+        console.error("Error refreshing token:", refreshError);
+        localStorage.clear(); // Clear tokens and logout user
+        navigate("/login");
+        throw refreshError;
+      }
+    }
+    return Promise.reject(error);
+  }
+);
