@@ -167,14 +167,6 @@ async def signup(request: Request, user_data: UserSignup):
 @limiter.limit("10/minute")
 async def login(request: Request, credentials: LoginRequest):
     try:
-        # Check login attempts
-        is_locked = await check_login_attempts(credentials.email)
-        if is_locked:
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Too many login attempts. Please try again later."
-            )
-        
         # Find user in database
         user = None
         try:
@@ -195,16 +187,6 @@ async def login(request: Request, credentials: LoginRequest):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid credentials"
             )
-        
-        # Check account status
-        if user.get("account_status", "inactive") != "active":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Account is not active"
-            )
-        
-        # Update last login and reset failed attempts
-        await record_login_attempt(credentials.email, True)
         
         # Generate tokens
         try:
