@@ -53,24 +53,50 @@ ACCOUNT_LOCKOUT_DURATION = 30  # minutes
 
 async def check_login_attempts(email: str) -> bool:
     """Check if user has exceeded login attempts"""
-    current_time = datetime.utcnow()
-    window_start = current_time - timedelta(minutes=LOGIN_ATTEMPT_WINDOW)
-    
-    attempts = db.login_attempts.count_documents({
-        "email": email,
-        "timestamp": {"$gte": window_start},
-        "success": False
-    })
-    
-    return attempts >= MAX_LOGIN_ATTEMPTS
+    try:
+        user = await db.users.find_one({"email": email})
+        if not user:
+            return False
+        
+        failed_attempts = user.get("failed_login_attempts", 0)
+        last_attempt = user.get("last_failed_login", None)
+        
+        # Reset attempts if last attempt was more than 15 minutes ago
+        if last_attempt and (datetime.utcnow() - last_attempt) > timedelta(minutes=15):
+            await db.users.update_one(
+                {"email": email},
+                {"$set": {"failed_login_attempts": 0}}
+            )
+            return False
+            
+        return failed_attempts >= 5
+    except Exception as e:
+        print(f"Error checking login attempts: {e}")
+        return False
 
-async def record_login_attempt(email: str, success: bool):
-    """Record login attempt for rate limiting"""
-    db.login_attempts.insert_one({
-        "email": email,
-        "timestamp": datetime.utcnow(),
-        "success": success
-    })
+async def record_login_attempt(email: str, success: bool) -> None:
+    """Record login attempt status"""
+    try:
+        if success:
+            await db.users.update_one(
+                {"email": email},
+                {
+                    "$set": {
+                        "failed_login_attempts": 0,
+                        "last_successful_login": datetime.utcnow()
+                    }
+                }
+            )
+        else:
+            await db.users.update_one(
+                {"email": email},
+                {
+                    "$inc": {"failed_login_attempts": 1},
+                    "$set": {"last_failed_login": datetime.utcnow()}
+                }
+            )
+    except Exception as e:
+        print(f"Error recording login attempt: {e}")
 
 
 
@@ -142,7 +168,8 @@ async def signup(request: Request, user_data: UserSignup):
 async def login(request: Request, credentials: LoginRequest):
     try:
         # Check login attempts
-        if await check_login_attempts(credentials.email):
+        is_locked = await check_login_attempts(credentials.email)
+        if is_locked:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Too many login attempts. Please try again later."
@@ -151,10 +178,9 @@ async def login(request: Request, credentials: LoginRequest):
         # Find user in database
         user = None
         try:
-            # Using motor's async find_one
             user = await db.users.find_one({"email": credentials.email})
             if user:
-                user['_id'] = str(user['_id'])  # Convert ObjectId to string
+                user['_id'] = str(user['_id'])
         except Exception as db_error:
             print(f"Database error during login: {db_error}")
             raise HTTPException(
@@ -177,16 +203,8 @@ async def login(request: Request, credentials: LoginRequest):
                 detail="Account is not active"
             )
         
-        # Update last login
-        await db.users.update_one(
-            {"_id": ObjectId(user["_id"])},
-            {
-                "$set": {
-                    "last_login": datetime.utcnow(),
-                    "failed_login_attempts": 0
-                }
-            }
-        )
+        # Update last login and reset failed attempts
+        await record_login_attempt(credentials.email, True)
         
         # Generate tokens
         try:
@@ -204,19 +222,13 @@ async def login(request: Request, credentials: LoginRequest):
                 detail="Token generation failed"
             )
         
-        # Record successful login
-        try:
-            await record_login_attempt(credentials.email, True)
-        except Exception as record_error:
-            print(f"Error recording login attempt: {record_error}")
-        
         return LoginResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="bearer",
             user={
                 "email": user["email"],
-                "username": user["username"],
+                "username": user.get("username", ""),
                 "id": user["_id"],
                 "is_admin": user.get("is_admin", False)
             }
@@ -230,7 +242,6 @@ async def login(request: Request, credentials: LoginRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during login"
         )
-
 
 @router.post("/refresh-token")
 async def refresh_token(request: TokenRefreshRequest):
