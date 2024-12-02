@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from app.database import db, to_json
 from app.models.question import Question
 from bson.objectid import ObjectId
 from app.utils.jwt import admin_required, get_current_user
+import asyncio
 
 router = APIRouter()
 
@@ -19,13 +20,37 @@ async def post_question(question: Question):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/")
-async def get_questions():
+async def get_questions(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=20, ge=1, le=100)
+):
     try:
-        # Fetch all questions using asynchronous iteration
-        questions_cursor = db["questions"].find()
-        questions = [to_json(question) async for question in questions_cursor]  # Convert ObjectId to string
+        # Calculate skip value for pagination
+        skip = (page - 1) * limit
         
-        return {"questions": questions}
+        # Fetch total count first
+        total_count = await db["questions"].count_documents({})
+        
+        # Only fetch questions if there are results
+        questions = []
+        if total_count > 0:
+            questions_cursor = db["questions"].find() \
+                .skip(skip) \
+                .limit(limit)
+            
+            # Fetch questions with error handling for cursor
+            try:
+                questions = [to_json(question) async for question in questions_cursor]
+            except Exception as cursor_error:
+                print(f"Error fetching from cursor: {cursor_error}")
+                raise HTTPException(status_code=500, detail="Error fetching questions from database")
+        
+        return {
+            "questions": questions,
+            "total": total_count,
+            "page": page,
+            "limit": limit
+        }
     except Exception as e:
         print(f"Error fetching questions: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while fetching questions")
