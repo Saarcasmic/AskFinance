@@ -117,7 +117,7 @@ async def get_pending_questions(user_id: str = None):
 async def add_comment(question_id: str, comment: dict, user: dict = Depends(get_current_user)):
     try:
         # Check if the question exists
-        question = db["questions"].find({"_id": ObjectId(question_id)})
+        question = await db["questions"].find_one({"_id": ObjectId(question_id)})
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
