@@ -103,7 +103,8 @@ async def get_pending_questions(user_id: str = None):
         if user_id:
             questions_cursor = db["questions"].find({"approved": False, "user_id": user_id})
         else:
-            questions_cursor = db["questions"].find({"approved": False})
+            # Explicitly set approved to False when fetching all pending questions
+            questions_cursor = db["questions"].find({"approved": {"$in": [False, None]}})
 
         questions = [to_json(question) async for question in questions_cursor]
         
