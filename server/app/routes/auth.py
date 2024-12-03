@@ -159,7 +159,7 @@ async def signup(request: Request, user_data: UserSignup):
             )
             refresh_token = create_access_token(
                 data={"sub": user_data.email, "user_id": str(new_user_data["_id"])},
-                expires_delta=timedelta(days=30)
+                is_refresh_token=True
             )
         except Exception as token_error:
             print(f"Token generation error: {token_error}")
