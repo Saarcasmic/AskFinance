@@ -107,13 +107,28 @@ async def record_login_attempt(email: str, success: bool) -> None:
 async def signup(request: Request, user_data: UserSignup):
     try:
         # Create index for email if it doesn't exist
-        db.users.create_index([("email", 1)], unique=True)
+        try:
+            await db.users.create_index([("email", 1)], unique=True)
+        except Exception as index_error:
+            print(f"Index creation error: {index_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Database configuration error"
+            )
         
         # Check if user exists using the index
-        if await db.users.find_one({"email": user_data.email}):
+        try:
+            existing_user = await db.users.find_one({"email": user_data.email})
+            if existing_user:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Email already registered"
+                )
+        except Exception as find_error:
+            print(f"User lookup error: {find_error}")
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Email already registered"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error checking user existence"
             )
         
         # Create new user with additional security fields
@@ -128,16 +143,30 @@ async def signup(request: Request, user_data: UserSignup):
             "account_status": "active"
         }
         
-        await db.users.insert_one(new_user_data)
+        try:
+            await db.users.insert_one(new_user_data)
+        except Exception as insert_error:
+            print(f"User insertion error: {insert_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error creating user account"
+            )
         
         # Generate tokens
-        access_token = create_access_token(
-            data={"sub": user_data.email, "user_id": str(new_user_data["_id"])}
-        )
-        refresh_token = create_access_token(
-            data={"sub": user_data.email, "user_id": str(new_user_data["_id"])},
-            expires_delta=timedelta(days=30)
-        )
+        try:
+            access_token = create_access_token(
+                data={"sub": user_data.email, "user_id": str(new_user_data["_id"])}
+            )
+            refresh_token = create_access_token(
+                data={"sub": user_data.email, "user_id": str(new_user_data["_id"])},
+                expires_delta=timedelta(days=30)
+            )
+        except Exception as token_error:
+            print(f"Token generation error: {token_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error generating authentication tokens"
+            )
         
         return {
             "access_token": access_token,
@@ -150,15 +179,13 @@ async def signup(request: Request, user_data: UserSignup):
             }
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
-        if "duplicate key error" in str(e).lower():
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Email already registered"
-            )
+        print(f"Unexpected signup error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while creating your account"
+            detail="An unexpected error occurred during signup"
         )
 
 # Traditional login route (email and password)
