@@ -31,7 +31,7 @@ async def google_login(request: GoogleLoginRequest):
             raise HTTPException(status_code=400, detail="Email not provided by Google")
 
         # Check if the user already exists in the database
-        existing_user = db.users.find_one({"email": email})
+        existing_user = await db.users.find_one({"email": email})
 
         if not existing_user:
             # Create a new user
@@ -44,7 +44,7 @@ async def google_login(request: GoogleLoginRequest):
             }
             
             # Insert the new user
-            db.users.insert_one(new_user_data)
+            await db.users.insert_one(new_user_data)
             existing_user = new_user_data
 
         # Generate access token
