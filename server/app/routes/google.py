@@ -16,7 +16,6 @@ class GoogleLoginRequest(BaseModel):
 async def google_login(request: GoogleLoginRequest):
     try:
         token = request.token
-        print("Received token:", token)
 
         # Verify the Google token
         url = "https://oauth2.googleapis.com/tokeninfo"
