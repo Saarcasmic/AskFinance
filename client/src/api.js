@@ -86,7 +86,7 @@ export const dislikeQuestion = async (questionId) => {
 const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refresh_token");
-    const response = await axios.post(`${config.API_BASE_URL}/auth/refresh-token`, {
+    const response = await API.post(`/auth/refresh-token`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -109,7 +109,7 @@ axios.interceptors.response.use(
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
         localStorage.clear(); // Clear tokens and logout user
-        navigate("/login");
+        window.location.href = "/login";
         throw refreshError;
       }
     }
