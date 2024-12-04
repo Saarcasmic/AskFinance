@@ -19,15 +19,10 @@ const Login = () => {
         email,
         password,
       });
-      alert("Login successful");
 
-      const { access_token, refresh_token } = response.data; // Extract refresh_token
+      const { access_token, refresh_token } = response.data;
       localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
-
-
-      // const token = response.data.access_token;
-      // localStorage.setItem("token", token);
+      localStorage.setItem("refresh_token", refresh_token);
 
       setIsLoggedIn(true);
 
@@ -36,7 +31,12 @@ const Login = () => {
       });
       setIsAdmin(userResponse.data.is_admin);
 
-      navigate("/dashboard");
+      // Only show alert and navigate after everything is set
+      alert("Login successful");
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 100);
+
     } catch (error) {
       if (error.response?.status === 429) {
         alert("Too many login attempts. Please try again later.");
@@ -48,7 +48,6 @@ const Login = () => {
         alert("An unexpected error occurred. Please try again.");
       }
     }
-    
   };
 
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
