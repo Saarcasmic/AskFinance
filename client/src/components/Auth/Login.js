@@ -32,7 +32,7 @@ const Login = () => {
       setIsLoggedIn(true);
 
       const userResponse = await axios.get(`${config.API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${access_token}` },
       });
       setIsAdmin(userResponse.data.is_admin);
 
