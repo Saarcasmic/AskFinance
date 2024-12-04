@@ -8,8 +8,8 @@
 
 .animated-title {
   margin: 0;
-  color: rgba(225,225,225, .01);
-  background-image: url("https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&q=80"); /* Changed to a finance-related image */
+  color: rgba(225, 225, 225, 0.1);
+  background-image: url("https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&q=80");
   background-repeat: repeat;
   -webkit-background-clip: text;
   background-clip: text;
@@ -17,6 +17,8 @@
   text-transform: uppercase;
   font-weight: 900;
   font-family: 'Raleway', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  opacity: 0.8;
 }
 
 @keyframes animate {
