@@ -26,8 +26,8 @@ const Login = () => {
       localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
 
 
-      // const token = response.data.access_token;
-      // localStorage.setItem("token", token);
+      const token = response.data.access_token;
+      localStorage.setItem("token", token);
 
       setIsLoggedIn(true);
 
