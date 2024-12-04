@@ -19,24 +19,24 @@ const Login = () => {
         email,
         password,
       });
+      alert("Login successful");
 
-      const { access_token, refresh_token } = response.data;
+      const { access_token, refresh_token } = response.data; // Extract refresh_token
       localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
+      localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
+
+
+      // const token = response.data.access_token;
+      // localStorage.setItem("token", token);
 
       setIsLoggedIn(true);
 
       const userResponse = await axios.get(`${config.API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${access_token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setIsAdmin(userResponse.data.is_admin);
 
-      // Only show alert and navigate after everything is set
-      alert("Login successful");
-      setTimeout(() => {
-        navigate("/dashboard", { replace: true });
-      }, 100);
-
+      navigate("/dashboard");
     } catch (error) {
       if (error.response?.status === 429) {
         alert("Too many login attempts. Please try again later.");
@@ -48,6 +48,7 @@ const Login = () => {
         alert("An unexpected error occurred. Please try again.");
       }
     }
+    
   };
 
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
