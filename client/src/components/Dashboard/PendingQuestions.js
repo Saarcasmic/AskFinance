@@ -35,6 +35,8 @@ const PendingQuestions = () => {
           return;
         }
 
+        console.log("Token:", token);
+
         const decodedToken = decodeJwt(token);
         if (!decodedToken || !decodedToken.user_id) {
           setError("Invalid or missing token. Please log in again.");
