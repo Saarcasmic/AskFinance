@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
   // Check login state on app load
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token found:", token);
+    
     if (token) {
       axios
         .get(`${config.API_BASE_URL}/auth/me`, {

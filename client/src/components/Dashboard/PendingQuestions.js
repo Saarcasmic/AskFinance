@@ -26,12 +26,9 @@ const PendingQuestions = () => {
     }
   };
 
-  console.log("HEYYYYY");
-
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        console.log("Fetching pending questions");
         const token = localStorage.getItem("access_token");
         // const access_token = localStorage.getItem("access_token");
         if (!token) {
@@ -39,18 +36,15 @@ const PendingQuestions = () => {
           return;
         }
 
-        console.log("Token:", token);
 
         const decodedToken = isAdmin ? decodeJwt(token) : decodeJwt(token);
-        console.log("Decoded Token:", decodedToken);
+        
         if (!decodedToken || !decodedToken.user_id) {
           setError("Invalid or missing token. Please log in again.");
           localStorage.removeItem("token");
           return;
         }
 
-        console.log("Fetching pending questions with user ID:", decodedToken.user_id);
-        console.log("Is admin:", isAdmin);
         
         // Add a guard clause to prevent unnecessary fetches
         if (!decodedToken.user_id) {
