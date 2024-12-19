@@ -44,19 +44,20 @@ const PendingQuestions = () => {
         const userId = decodedToken.user_id;
         const response = await getPendingQuestions(isAdmin ? null : userId);
 
-        if (Array.isArray(response.questions)) {
+        if (response && response.questions) {
           setPendingQuestions(response.questions);
         } else {
+          console.warn("No questions data in response:", response);
           setPendingQuestions([]);
         }
       } catch (err) {
+        console.error("Error fetching pending questions:", err);
         setError("Failed to load pending questions. Please try again later.");
-        console.error(err);
       }
     };
 
     fetchQuestions();
-  }, [isAdmin]);
+  }, []);
 
   const handleToggleComments = (questionId) => {
     setExpandedComments((prev) => (prev === questionId ? null : questionId));
@@ -109,16 +110,15 @@ const PendingQuestions = () => {
                 pendingQuestions.map((question) => (
                   <div
                     key={question._id}
-                    className="bg-black/50 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 mb-8 
-                             transition hover:shadow-lg hover:bg-black/70"
+                    className="bg-white/80 backdrop-blur-sm shadow-md border border-gray-200 rounded-lg p-6 mb-8 transition hover:shadow-lg"
                   >
                     {/* Question Title */}
-                    <h3 className="text-lg font-gilroy font-semibold text-white mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
                       {question.title}
                     </h3>
 
                     {/* Question Description */}
-                    <p className="text-gray-400 text-sm font-gilroy mb-4">
+                    <p className="text-gray-700 text-sm mb-4">
                       {question.description}
                     </p>
 
@@ -126,7 +126,7 @@ const PendingQuestions = () => {
                     <div className="flex items-center justify-between">
                       {/* Comments Toggle Button */}
                       <button
-                        className="text-blue-400 font-gilroy font-medium hover:text-blue-300 transition"
+                        className="text-blue-700 font-medium hover:text-blue-900 transition"
                         onClick={() => handleToggleComments(question._id)}
                       >
                         {expandedComments === question._id
@@ -140,7 +140,7 @@ const PendingQuestions = () => {
                           decodeJwt(localStorage.getItem("token"))?.user_id) && (
                         <div className="flex gap-4">
                           <button
-                            className="text-red-400 font-gilroy hover:text-red-300 transition"
+                            className="text-red-600 hover:text-red-800 transition"
                             onClick={() => handleDelete(question._id)}
                           >
                             Delete
@@ -151,7 +151,7 @@ const PendingQuestions = () => {
 
                     {/* Conditionally Render Comment Section */}
                     {expandedComments === question._id && (
-                      <div className="mt-6 border-t border-zinc-800 pt-6">
+                      <div className="mt-6">
                         <CommentSection
                           questionId={question._id}
                           isAdmin={isAdmin}
