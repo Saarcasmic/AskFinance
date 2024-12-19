@@ -11,7 +11,7 @@ const AuthProvider = ({ children }) => {
 
   // Check login state on app load
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("token");
     console.log("Token found:", token);
     if (token) {
       axios
