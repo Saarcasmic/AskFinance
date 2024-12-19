@@ -32,6 +32,7 @@ export const postQuestion = (data) => API.post(`/questions`, data);
 
 export const getPendingQuestions = async (userId) => {
   try {
+    console.log("Fetching pending questions for user:", userId);
     const token = localStorage.getItem("token");
     const endpoint = userId ? `/questions/pending?user_id=${userId}` : '/questions/pending';
     
