@@ -134,7 +134,7 @@ const Feed = () => {
 
     try {
       const response = await deleteQuestion(questionId);
-      // alert(response.message);
+      alert(response.message);
       setQuestions(questions.filter((question) => question._id !== questionId));
     } catch (err) {
       alert("Failed to delete the question. Please try again.");
@@ -159,7 +159,7 @@ const Feed = () => {
         tags: editForm.tags.split(",").map((tag) => tag.trim()),
       };
       const response = await editQuestion(questionId, updatedData);
-      // alert(response.message);
+      alert(response.message);
 
       setQuestions(
         questions.map((question) =>
