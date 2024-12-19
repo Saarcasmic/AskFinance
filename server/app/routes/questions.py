@@ -268,7 +268,8 @@ async def like_question(question_id: str, user: dict = Depends(get_current_user)
 @router.post("/{question_id}/dislike")
 async def dislike_question(question_id: str, user: dict = Depends(get_current_user)):
     try:
-        question = db["questions"].find({"_id": ObjectId(question_id)})
+        # Fix: Use find_one() instead of find() and await the result
+        question = await db["questions"].find_one({"_id": ObjectId(question_id)})
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
