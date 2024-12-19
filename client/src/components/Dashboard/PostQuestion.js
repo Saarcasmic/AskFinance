@@ -20,7 +20,7 @@ const PostQuestion = () => {
     // const access_token = localStorage.getItem("access_token");
     if (token) {
       try {
-        const decodedToken = decodeJwt(access_token);
+        const decodedToken = decodeJwt(token);
         setUserId(decodedToken.user_id);
       } catch (error) {
         console.error("Error decoding token:", error);
