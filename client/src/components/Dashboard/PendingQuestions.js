@@ -73,7 +73,7 @@ const PendingQuestions = () => {
     };
 
     fetchQuestions();
-  }, []);
+  }, [isAdmin]);
 
   const handleToggleComments = (questionId) => {
     setExpandedComments((prev) => (prev === questionId ? null : questionId));
