@@ -82,26 +82,26 @@ const PendingQuestions = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-lg font-medium text-red-500">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-lg font-gilroy text-red-500">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-500 via-green-600 to-green-700">
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="relative">
           {/* Decorative background */}
-          <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
-            <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-200 to-green-300"></div>
-            <div className="blur-[106px] h-32 bg-gradient-to-r from-green-300 to-yellow-200"></div>
+          <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-20">
+            <div className="blur-[106px] h-56 bg-gradient-to-br from-blue-900 to-gray-900"></div>
+            <div className="blur-[106px] h-32 bg-gradient-to-r from-gray-900 to-blue-900"></div>
           </div>
 
           {/* Main Content */}
           <div className="relative space-y-6">
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl p-6">
-              <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
+            <div className="bg-zinc-900/80 backdrop-blur-lg rounded-xl border border-zinc-800 shadow-xl p-6">
+              <h1 className="text-3xl font-romie text-white text-center mb-8">
                 Your Pending Questions
               </h1>
 
@@ -109,15 +109,16 @@ const PendingQuestions = () => {
                 pendingQuestions.map((question) => (
                   <div
                     key={question._id}
-                    className="bg-white/80 backdrop-blur-sm shadow-md border border-gray-200 rounded-lg p-6 mb-8 transition hover:shadow-lg"
+                    className="bg-black/50 backdrop-blur-sm border border-zinc-800 rounded-lg p-6 mb-8 
+                             transition hover:shadow-lg hover:bg-black/70"
                   >
                     {/* Question Title */}
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    <h3 className="text-lg font-gilroy font-semibold text-white mb-2">
                       {question.title}
                     </h3>
 
                     {/* Question Description */}
-                    <p className="text-gray-700 text-sm mb-4">
+                    <p className="text-gray-400 text-sm font-gilroy mb-4">
                       {question.description}
                     </p>
 
@@ -125,7 +126,7 @@ const PendingQuestions = () => {
                     <div className="flex items-center justify-between">
                       {/* Comments Toggle Button */}
                       <button
-                        className="text-blue-700 font-medium hover:text-blue-900 transition"
+                        className="text-blue-400 font-gilroy font-medium hover:text-blue-300 transition"
                         onClick={() => handleToggleComments(question._id)}
                       >
                         {expandedComments === question._id
@@ -139,7 +140,7 @@ const PendingQuestions = () => {
                           decodeJwt(localStorage.getItem("token"))?.user_id) && (
                         <div className="flex gap-4">
                           <button
-                            className="text-red-600 hover:text-red-800 transition"
+                            className="text-red-400 font-gilroy hover:text-red-300 transition"
                             onClick={() => handleDelete(question._id)}
                           >
                             Delete
@@ -150,7 +151,7 @@ const PendingQuestions = () => {
 
                     {/* Conditionally Render Comment Section */}
                     {expandedComments === question._id && (
-                      <div className="mt-6">
+                      <div className="mt-6 border-t border-zinc-800 pt-6">
                         <CommentSection
                           questionId={question._id}
                           isAdmin={isAdmin}
@@ -160,7 +161,7 @@ const PendingQuestions = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-gray-800">
+                <p className="text-center text-gray-400 font-gilroy">
                   No pending questions available.
                 </p>
               )}
@@ -169,8 +170,6 @@ const PendingQuestions = () => {
         </div>
       </div>
     </div>
-
-
   );
 };
 
