@@ -19,7 +19,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access-token");
     setIsLoggedIn(false);
     navigate("/login");
     window.location.reload();
