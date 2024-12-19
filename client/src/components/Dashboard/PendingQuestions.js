@@ -38,16 +38,18 @@ const PendingQuestions = () => {
         const decodedToken = decodeJwt(token);
         if (!decodedToken || !decodedToken.user_id) {
           setError("Invalid or missing token. Please log in again.");
+          localStorage.removeItem("token"); // Clear invalid token
           return;
         }
 
-        const userId = decodedToken.user_id;
-        const response = await getPendingQuestions(isAdmin ? null : userId);
-
-        if (response && response.questions) {
+        // Pass null for admin to see all pending questions, otherwise pass user_id
+        const response = await getPendingQuestions(isAdmin ? null : decodedToken.user_id);
+        
+        if (response && Array.isArray(response.questions)) {
           setPendingQuestions(response.questions);
+          setError(""); // Clear any existing errors
         } else {
-          console.warn("No questions data in response:", response);
+          console.warn("Unexpected response format:", response);
           setPendingQuestions([]);
         }
       } catch (err) {
@@ -57,7 +59,7 @@ const PendingQuestions = () => {
     };
 
     fetchQuestions();
-  }, []);
+  }, [isAdmin]); // Add isAdmin as dependency since we use it in the fetch
 
   const handleToggleComments = (questionId) => {
     setExpandedComments((prev) => (prev === questionId ? null : questionId));
