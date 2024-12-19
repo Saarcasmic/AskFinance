@@ -26,9 +26,12 @@ const PendingQuestions = () => {
     }
   };
 
+  console.log(decodeJwt(localStorage.getItem("token")));
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        console.log("Fetching pending questions");
         const token = localStorage.getItem("token");
         if (!token) {
           setError("User not logged in.");
