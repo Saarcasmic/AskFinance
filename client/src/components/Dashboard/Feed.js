@@ -239,7 +239,7 @@ const Feed = () => {
   return (
     
       <div >
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
+        <h1 className="text-3xl font-bold text-white-900 text-center mb-8">
           Approved Questions
         </h1>
 
