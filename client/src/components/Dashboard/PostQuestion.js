@@ -13,12 +13,14 @@ const PostQuestion = () => {
   const [tags, setTags] = useState("");
   const [approved, setApproved] = useState(false);
   const [userId, setUserId] = useState("");
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const access_token = localStorage.getItem("access_token");
     if (token) {
       try {
-        const decodedToken = decodeJwt(token);
+        const decodedToken = decodeJwt(access_token);
         setUserId(decodedToken.user_id);
       } catch (error) {
         console.error("Error decoding token:", error);
