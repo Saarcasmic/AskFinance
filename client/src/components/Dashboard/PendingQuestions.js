@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { getPendingQuestions, deleteQuestion } from "../../api";
 import CommentSection from "./CommentSection";
 import { AuthContext } from "../../AuthContext";
@@ -7,7 +7,7 @@ const PendingQuestions = () => {
   const [pendingQuestions, setPendingQuestions] = useState([]);
   const [expandedComments, setExpandedComments] = useState(null); // Track expanded comment sections
   const [error, setError] = useState("");
-  const { isAdmin } = useContext(AuthContext);
+  // const { isAdmin } = useContext(AuthContext);
 
   const decodeJwt = (token) => {
     if (!token) {
@@ -26,7 +26,7 @@ const PendingQuestions = () => {
     }
   };
 
-  console.log(decodeJwt(localStorage.getItem("token")));
+  console.log("HEYYYYY");
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -41,6 +41,7 @@ const PendingQuestions = () => {
         console.log("Token:", token);
 
         const decodedToken = decodeJwt(token);
+        console.log("Decoded Token:", decodedToken);
         if (!decodedToken || !decodedToken.user_id) {
           setError("Invalid or missing token. Please log in again.");
           localStorage.removeItem("token");
@@ -48,7 +49,7 @@ const PendingQuestions = () => {
         }
 
         console.log("Fetching pending questions with user ID:", decodedToken.user_id);
-        console.log("Is admin:", isAdmin);
+        // console.log("Is admin:", isAdmin);
         
         // Add a guard clause to prevent unnecessary fetches
         if (!decodedToken.user_id) {
