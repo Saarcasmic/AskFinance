@@ -29,6 +29,7 @@ const Login = () => {
 
 
       const token = response.data.access_token;
+      console.log("Token from normal login:", token);
       localStorage.setItem("token", token);
 
       setIsLoggedIn(true);
@@ -62,18 +63,22 @@ const Login = () => {
             throw new Error("Invalid Google token received.");
         }
 
-        const token = response.credential;
-        localStorage.setItem("token", token);
+        // const token = response.credential;
+        // localStorage.setItem("token", token);
 
         const userResponse = await axios.post(`${config.API_BASE_URL}/google-auth/login`, {
-            token: token,  // Send token in the expected format
+            token: response.credential,  // Send token in the expected format
         });
 
         
-
+        console.log("User response:", userResponse.data);
         const { access_token, refresh_token } = userResponse.data; // Extract refresh_token
         localStorage.setItem("access_token", access_token);
         localStorage.setItem("refresh_token", refresh_token); // Store refresh_token
+
+        const token = userResponse.data.access_token;
+        console.log("Token from googel:", token);
+        localStorage.setItem("token", token);
 
         setIsLoggedIn(true);
         navigate("/dashboard");
