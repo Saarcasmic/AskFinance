@@ -33,23 +33,9 @@ export const postQuestion = (data) => API.post(`/questions`, data);
 export const getPendingQuestions = async (userId) => {
   try {
     console.log("Fetching pending questions for user:", userId);
-    const token = localStorage.getItem("token");
-    const endpoint = userId ? `/questions/pending?user_id=${userId}` : '/questions/pending';
-    
-    const response = await fetch(`${API.baseURL}${endpoint}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    const params = userId ? { user_id: userId } : {};
+    const response = await API.get('/questions/pending', { params });
+    return response.data;
   } catch (error) {
     console.error('Error fetching pending questions:', error);
     throw error;
