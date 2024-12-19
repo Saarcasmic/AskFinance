@@ -33,6 +33,7 @@ const PendingQuestions = () => {
       try {
         console.log("Fetching pending questions");
         const token = localStorage.getItem("token");
+        const access_token = localStorage.getItem("access_token");
         if (!token) {
           setError("User not logged in.");
           return;
@@ -40,7 +41,7 @@ const PendingQuestions = () => {
 
         console.log("Token:", token);
 
-        const decodedToken = decodeJwt(token);
+        const decodedToken = isAdmin ? decodeJwt(token) : decodeJwt(access_token);
         console.log("Decoded Token:", decodedToken);
         if (!decodedToken || !decodedToken.user_id) {
           setError("Invalid or missing token. Please log in again.");
