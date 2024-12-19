@@ -20,7 +20,7 @@ const Signup = () => {
         password,
         is_admin: false,
       });
-      alert("Signup successful");
+      // alert("Signup successful");
       navigate("/login");
     } catch (error) {
       alert("Signup failed. Please try again.");

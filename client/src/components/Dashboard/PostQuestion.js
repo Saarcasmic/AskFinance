@@ -16,8 +16,8 @@ const PostQuestion = () => {
   
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const access_token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
+    // const access_token = localStorage.getItem("access_token");
     if (token) {
       try {
         const decodedToken = decodeJwt(access_token);
@@ -47,7 +47,7 @@ const PostQuestion = () => {
         user_id: userId,
       };
       await axios.post(`${config.API_BASE_URL}/questions`, questionData);
-      alert("Question posted!");
+      // alert("Question posted!");
       setTitle("");
       setDescription("");
       setTags("");

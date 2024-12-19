@@ -21,7 +21,7 @@ const Login = () => {
         email,
         password,
       });
-      alert("Login successful");
+      // alert("Login successful");
 
       const { access_token, refresh_token } = response.data; // Extract refresh_token
       localStorage.setItem("access_token", access_token);
