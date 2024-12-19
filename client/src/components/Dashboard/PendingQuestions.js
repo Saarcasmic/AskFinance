@@ -42,7 +42,15 @@ const PendingQuestions = () => {
           return;
         }
 
-        // Always pass the user_id, regardless of admin status
+        console.log("Fetching pending questions with user ID:", decodedToken.user_id);
+        console.log("Is admin:", isAdmin);
+        
+        // Add a guard clause to prevent unnecessary fetches
+        if (!decodedToken.user_id) {
+          console.warn("Skipping fetch - no user ID available");
+          return;
+        }
+
         const response = await getPendingQuestions(decodedToken.user_id);
         
         if (response && Array.isArray(response.questions)) {
@@ -53,7 +61,7 @@ const PendingQuestions = () => {
           setPendingQuestions([]);
         }
       } catch (err) {
-        console.error("Error fetching pending questions:", err);
+        console.error("Error in fetchQuestions:", err);
         setError("Failed to load pending questions. Please try again later.");
       }
     };

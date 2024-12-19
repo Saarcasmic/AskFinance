@@ -36,7 +36,7 @@ export const getPendingQuestions = async (userId) => {
     const token = localStorage.getItem("token");
     const endpoint = userId ? `/questions/pending?user_id=${userId}` : '/questions/pending';
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${API.baseURL}${endpoint}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
