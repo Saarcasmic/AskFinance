@@ -76,7 +76,7 @@ async def reject_question(question_id: str):
     try:
         result = await db["questions"].update_one(
             {"_id": ObjectId(question_id)},
-            {"$set": {"approved": True}}
+            {"$set": {"approved": False}}
         )
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Question not found")

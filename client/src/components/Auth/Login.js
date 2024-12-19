@@ -99,19 +99,19 @@ const Login = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <div className="min-h-screen bg-gradient-to-b from-green-500 via-green-600 to-green-700 text-white">
+      <div className="min-h-screen bg-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="relative">
             {/* Background decoration */}
-            <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-40 dark:opacity-20">
-              <div className="blur-[106px] h-56 bg-gradient-to-br from-yellow-100 to-green-200"></div>
-              <div className="blur-[106px] h-32 bg-gradient-to-r from-green-200 to-yellow-100"></div>
+            <div className="absolute inset-0 grid grid-cols-2 -space-x-52 opacity-20">
+              <div className="blur-[106px] h-56 bg-gradient-to-br from-blue-900 to-gray-900"></div>
+              <div className="blur-[106px] h-32 bg-gradient-to-r from-gray-900 to-blue-900"></div>
             </div>
 
             {/* Login Form Container */}
             <div className="relative flex flex-col items-center justify-center">
-              <div className="w-full max-w-md p-8 bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl">
-                <h1 className="text-4xl font-bold text-center text-white mb-8">Welcome Back</h1>
+              <div className="w-full max-w-md p-8 bg-zinc-900/80 backdrop-blur-lg rounded-xl border border-zinc-800 shadow-2xl">
+                <h1 className="text-4xl font-romie text-center text-white mb-8">Welcome Back</h1>
                 <form onSubmit={handleLogin} className="space-y-6">
                   <div>
                     <input
@@ -119,9 +119,9 @@ const Login = () => {
                       placeholder="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full p-4 border-2 border-white/20 rounded-lg bg-white/10 backdrop-blur-sm 
-                               focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
-                               text-white placeholder-white/60"
+                      className="w-full p-4 border border-zinc-700 rounded-lg bg-black/50 
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                               text-white placeholder-gray-400 font-gilroy"
                     />
                   </div>
                   <div>
@@ -130,16 +130,16 @@ const Login = () => {
                       placeholder="Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full p-4 border-2 border-white/20 rounded-lg bg-white/10 backdrop-blur-sm
-                               focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
-                               text-white placeholder-white/60"
+                      className="w-full p-4 border border-zinc-700 rounded-lg bg-black/50
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                               text-white placeholder-gray-400 font-gilroy"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full py-4 bg-green-400 text-white rounded-lg text-xl font-semibold
-                             transition duration-300 hover:bg-green-300 hover:shadow-lg
-                             focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="w-full py-4 bg-white text-black rounded-full text-xl font-gilroy
+                             transition-colors hover:bg-gray-100
+                             focus:outline-none focus:ring-2 focus:ring-white/50"
                   >
                     Sign In
                   </button>
@@ -148,9 +148,9 @@ const Login = () => {
                 <div className="mt-6">
                   <button
                     onClick={() => navigate("/signup")}
-                    className="w-full py-4 bg-white/10 backdrop-blur-sm text-white rounded-lg text-xl
-                             font-semibold transition duration-300 hover:bg-white/20
-                             border-2 border-white/20"
+                    className="w-full py-4 bg-zinc-800 text-white rounded-full text-xl
+                             font-gilroy transition-colors hover:bg-zinc-700
+                             border border-zinc-700"
                   >
                     Create Account
                   </button>
@@ -161,7 +161,7 @@ const Login = () => {
                     onSuccess={handleGoogleLoginSuccess}
                     onError={handleGoogleLoginFailure}
                     useOneTap
-                    theme="filled_blue"
+                    theme="filled_black"
                     shape="circle"
                     size="large"
                   />
