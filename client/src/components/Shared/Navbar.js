@@ -20,6 +20,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("access-token");
+    localStorage.removeItem("refresh-token");
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     navigate("/login");
     window.location.reload();
