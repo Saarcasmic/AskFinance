@@ -3,7 +3,8 @@
 A comprehensive Q&A web application where users can post and engage in finance-related questions, and admins manage content. This project demonstrates a full-stack implementation using modern technologies.
 
 ---
-![image](https://github.com/user-attachments/assets/6b2b4ac1-f575-4907-99c0-166f44f385b2)
+[screen-capture (2).webm](https://github.com/user-attachments/assets/1d9e8e97-04e3-435f-be19-72af2ba02819)
+
 
 ## 🚀 Features
 
