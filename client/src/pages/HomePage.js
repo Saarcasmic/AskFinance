@@ -1,136 +1,351 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import './HomePage.css';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "Investment Analyst",
+      content: "AskFinance has been instrumental in helping me make informed investment decisions. The expert insights are invaluable.",
+      company: "Goldman Sachs",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
+    },
+    {
+      name: "Michael Rodriguez",
+      role: "Portfolio Manager",
+      content: "The quality of financial advice on this platform is exceptional. It's like having a team of expert advisors at your fingertips.",
+      company: "BlackRock",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
+    },
+    {
+      name: "Emily Thompson",
+      role: "Financial Advisor",
+      content: "As a financial advisor, I appreciate the platform's commitment to providing accurate, well-researched information.",
+      company: "Morgan Stanley",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
+    },
+    {
+      name: "David Park",
+      role: "Retail Investor",
+      content: "The platform has helped me understand complex financial concepts and make better investment choices.",
+      company: "Independent Trader",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
+    }
+  ];
+
+  const nextTestimonial = useCallback(() => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  }, [testimonials.length]);
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll').forEach((elem) => {
+      observer.observe(elem);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    let intervalId;
+    if (!isHovered) {
+      intervalId = setInterval(nextTestimonial, 5000);
+    }
+    return () => clearInterval(intervalId);
+  }, [isHovered, nextTestimonial]);
+
   return (
-    <>
-      <section id="hero" className="h-screen bg-black relative overflow-hidden">
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-50">
-          <source src="https://web-images.credcdn.in/v2/_next/assets/videos/landing/desktop/hero-desktop.mp4" type="video/mp4" />
-        </video>
+    <div className="bg-zinc-900 text-white">
+      {/* Hero Section */}
+      <section className="min-h-screen relative flex items-center border-b border-white/5">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 to-black"></div>
         
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center">
-          <h1 className="text-6xl md:text-8xl font-romie text-white leading-tight max-w-4xl">
-            Where Finance Questions Meet Expert Answers
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mt-8 max-w-2xl font-gilroy">
-            Get personalized financial advice from verified experts. Your path to financial clarity starts here.
-          </p>
-          <button 
-            onClick={() => window.location.href = "/login"}
-            className="mt-12 bg-white text-black px-8 py-4 rounded-full text-lg font-gilroy hover:bg-gray-100 transition-colors inline-block w-fit"
-          >
-            Ask Your Question
-          </button>
-        </div>
-      </section>
-
-      <section id="features" className="bg-black text-white py-24">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl md:text-7xl font-romie mb-16 text-center">
-            Expert Financial Guidance at Your Fingertips
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {[
-              {
-                video: "https://web-images.credcdn.in/v2/_next/assets/videos/landing/desktop/ccbp-fold-d.mp4",
-                title: "Verified Experts",
-                description: "Get answers from certified financial advisors, analysts, and industry professionals."
-              },
-              {
-                video: "https://web-images.credcdn.in/v2/_next/assets/videos/landing/desktop/rewards-desktop-final.mp4",
-                title: "Real-time Solutions",
-                description: "Get quick, personalized responses to your urgent financial questions."
-              },
-              {
-                video: "https://web-images.credcdn.in/v2/_next/assets/videos/landing/desktop/phone-ticker-desktop-final.mp4",
-                title: "Knowledge Hub",
-                description: "Access a vast library of financial insights and expert recommendations."
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-zinc-900 p-8 rounded-xl border border-zinc-800">
-                <video autoPlay loop muted playsInline className="w-full h-64 object-cover mb-8 rounded-lg">
-                  <source src={feature.video} type="video/mp4" />
-                </video>
-                <h3 className="text-2xl font-gilroy mb-4">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-
-          
-        </div>
-      </section>
-
-      <section id="howItWorks" className="bg-black text-white py-24">
-        <div className="container mx-auto px-4">
-          <h2 className="text-5xl md:text-7xl font-romie mb-24 text-center">
-            Your Journey to Financial Clarity
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            {[
-              {
-                number: "01",
-                icon: "plus-icon.png",
-                title: "Ask Your Question",
-                description: "Submit your financial query with relevant details and context for the best possible guidance."
-              },
-              {
-                number: "02",
-                icon: "datasafe.png",
-                title: "Expert Match",
-                description: "Our system connects you with the most qualified expert for your specific financial query."
-              },
-              {
-                number: "03",
-                icon: "footer-logo.png",
-                title: "Get Solutions",
-                description: "Receive personalized advice and actionable insights from industry professionals."
-              }
-            ].map((step, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -top-8 -left-8 text-8xl font-romie text-zinc-800">
-                  {step.number}
-                </div>
-                <div className="bg-zinc-900 p-8 rounded-xl border border-zinc-800 relative z-10">
-                  {index === 2 ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 mb-6 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <img 
-                      src={`https://web-images.credcdn.in/v2/_next/assets/images/landing/${step.icon}`}
-                      alt={`Step ${index + 1}`}
-                      className="w-12 h-12 mb-6"
-                    />
-                  )}
-                  <h3 className="text-2xl font-gilroy mb-4">{step.title}</h3>
-                  <p className="text-gray-400">{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-24 text-center">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-semibold leading-tight mb-8 animate-on-scroll">
+              Professional Financial
+              <br />
+              <span className="text-white/90">Guidance & Expertise</span>
+            </h1>
+            <p className="text-lg md:text-xl text-zinc-400 mb-12 animate-on-scroll delay-200 max-w-2xl">
+              Connect with verified financial experts for personalized advice and professional insights. 
+              Make informed decisions with institutional-grade guidance.
+            </p>
             <button 
-              onClick={() => window.location.href = "/signup"}
-              className="bg-white text-black px-12 py-6 rounded-full text-xl font-gilroy hover:bg-gray-100 transition-colors inline-flex items-center justify-center gap-4"
+              onClick={() => navigate("/login")}
+              className="px-8 py-4 bg-white text-zinc-900 rounded-md text-sm font-medium
+                       hover:bg-zinc-100 transition-colors duration-200 animate-on-scroll delay-400"
             >
-              Start Your Journey
-              <img 
-                src="https://web-images.credcdn.in/v2/_next/assets/images/landing/down-arrow.png" 
-                alt="Arrow" 
-                className="w-6 h-6 rotate-90 invert" 
-              />
+              Get Started
             </button>
           </div>
         </div>
       </section>
 
-      {/* Additional sections follow the same pattern */}
-    </>
+      {/* Features Section */}
+      <section className="py-24 relative bg-black">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
+            Why Choose AskFinance
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
+                title: "Verified Expertise",
+                description: "All advisors undergo rigorous verification to ensure highest quality guidance."
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                ),
+                title: "Rapid Response",
+                description: "Get timely answers to your critical financial questions from industry experts."
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                ),
+                title: "Knowledge Repository",
+                description: "Access comprehensive financial insights and market analysis."
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                className="feature-card bg-zinc-900 border border-white/5 rounded-lg p-6 animate-on-scroll"
+                style={{ animationDelay: `${index * 200}ms` }}
+              >
+                <div className="text-white mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-lg font-medium mb-3 text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section className="py-24 bg-zinc-900">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
+            How It Works
+          </h2>
+
+          <div className="max-w-5xl mx-auto">
+            {[
+              {
+                number: "01",
+                title: "Submit Your Query",
+                description: "Provide detailed context for comprehensive guidance."
+              },
+              {
+                number: "02",
+                title: "Expert Assignment",
+                description: "Get matched with a qualified financial advisor."
+              },
+              {
+                number: "03",
+                title: "Receive Professional Insight",
+                description: "Obtain actionable recommendations and analysis."
+              }
+            ].map((step, index) => (
+              <div 
+                key={index}
+                className="process-step flex items-start mb-16 last:mb-0 animate-on-scroll"
+                style={{ animationDelay: `${index * 200}ms` }}
+              >
+                <div className="mr-8 flex-shrink-0">
+                  <span className="inline-block w-12 h-12 rounded-full bg-white/5 text-white
+                                 flex items-center justify-center text-lg font-medium">
+                    {step.number}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-2 text-white">{step.title}</h3>
+                  <p className="text-zinc-400">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center animate-on-scroll">
+            <button 
+              onClick={() => navigate("/signup")}
+              className="px-8 py-4 bg-white text-zinc-900 rounded-md text-sm font-medium
+                       hover:bg-zinc-100 transition-colors duration-200"
+            >
+              Create Account
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Project Overview Section */}
+      <section className="py-24 bg-black relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-12 text-center animate-on-scroll">
+              Transforming Financial Guidance
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="animate-on-scroll delay-200">
+                <h3 className="text-xl font-medium mb-6 text-white">Institutional-Grade Financial Advice</h3>
+                <p className="text-zinc-400 leading-relaxed mb-6">
+                  AskFinance bridges the gap between retail investors and professional financial expertise. 
+                  Our platform connects you with verified financial advisors, providing institutional-quality 
+                  guidance typically reserved for high-net-worth clients.
+                </p>
+                <ul className="space-y-4">
+                  {[
+                    "Expert-verified responses within 24 hours",
+                    "Comprehensive market analysis and insights",
+                    "Personalized investment strategies",
+                    "Regulatory compliant advice"
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-center text-zinc-400">
+                      <svg className="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="relative animate-on-scroll delay-400">
+                <div className="aspect-square rounded-lg bg-zinc-800/50 border border-white/5 p-8 backdrop-blur-sm">
+                  <div className="relative h-full">
+                    <div className="absolute -top-4 -left-4 w-24 h-24 bg-white/5 rounded-full"></div>
+                    <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-white/5 rounded-full"></div>
+                    <div className="relative h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-4xl font-semibold mb-2">10K+</div>
+                        <div className="text-zinc-400">Questions Answered</div>
+                        <div className="mt-8 text-4xl font-semibold mb-2">500+</div>
+                        <div className="text-zinc-400">Verified Experts</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 bg-zinc-900 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
+            Trusted by Financial Professionals
+          </h2>
+
+          <div className="max-w-4xl mx-auto relative">
+            <div 
+              className="testimonial-carousel relative"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <div className="testimonial-slide bg-zinc-800/50 rounded-lg border border-white/5 p-8 backdrop-blur-sm">
+                <div className="flex items-start gap-6 mb-8">
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={testimonials[currentTestimonial].image}
+                      alt={testimonials[currentTestimonial].name}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
+                    />
+                  </div>
+                  <div className="flex-grow">
+                    <Quote className="w-8 h-8 text-white/20 mb-4" />
+                    <p className="text-lg text-zinc-300 leading-relaxed">
+                      "{testimonials[currentTestimonial].content}"
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between border-t border-white/5 pt-6">
+                  <div>
+                    <div className="font-medium text-white">
+                      {testimonials[currentTestimonial].name}
+                    </div>
+                    <div className="text-sm text-zinc-400 mt-1">
+                      {testimonials[currentTestimonial].role} • {testimonials[currentTestimonial].company}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={prevTestimonial}
+                      className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextTestimonial}
+                      className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center mt-6 space-x-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 
+                      ${index === currentTestimonial 
+                        ? 'bg-white w-6' 
+                        : 'bg-zinc-700 hover:bg-zinc-600'}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 

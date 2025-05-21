@@ -43,15 +43,451 @@ button {
 button::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: translateX(-100%);
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 0;
+  padding-bottom: 120%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform 0.6s, opacity 0.6s;
 }
 
 button:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* Particle Effect */
+.particles-container {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95));
+  position: relative;
+  overflow: hidden;
+}
+
+.particles-container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: particleMove 20s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes particleMove {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Glowing Overlay */
+.glowing-overlay {
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(33, 150, 243, 0.1),
+    rgba(156, 39, 176, 0.1),
+    transparent 60%);
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* Text Gradient Animation */
+.text-gradient-animate {
+  background: linear-gradient(
+    to right,
+    #ffffff,
+    #2196f3,
+    #9c27b0,
+    #ffffff
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: textGradient 8s linear infinite;
+}
+
+@keyframes textGradient {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Glow Button */
+.glow-button {
+  position: relative;
+  background: linear-gradient(45deg, #2196f3, #9c27b0);
+  border: none;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+  transform: rotate(0deg);
+  animation: buttonGlow 3s linear infinite;
+}
+
+@keyframes buttonGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 3D Feature Cards */
+.feature-card-3d {
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+}
+
+.feature-card-3d:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.icon-container {
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.feature-card-3d:hover .icon-container {
+  transform: translateZ(20px);
+}
+
+/* Floating Shapes */
+.floating-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.floating-shapes::before,
+.floating-shapes::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.1) 0%, transparent 70%);
+  animation: float 10s infinite;
+}
+
+.floating-shapes::after {
+  right: -100px;
+  top: 20%;
+  background: radial-gradient(circle, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(50px, 50px); }
+  50% { transform: translate(0, 100px); }
+  75% { transform: translate(-50px, 50px); }
+}
+
+/* Timeline */
+.timeline-container {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    transparent,
+    rgba(33, 150, 243, 0.5),
+    rgba(156, 39, 176, 0.5),
+    transparent
+  );
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 60px;
+  width: 50%;
+  padding-right: 50px;
+}
+
+.timeline-item:nth-child(even) {
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 50px;
+}
+
+.timeline-number {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #2196f3, #9c27b0);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  right: -30px;
+  top: 0;
+}
+
+.timeline-item:nth-child(even) .timeline-number {
+  right: auto;
+  left: -30px;
+}
+
+.timeline-content {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-5px);
+}
+
+/* Scroll Animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.animate-on-scroll.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay Classes */
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+/* CTA Button */
+.cta-button {
+  background: linear-gradient(45deg, #2196f3, #9c27b0);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.cta-button:hover::before {
   transform: translateX(100%);
-  transition: transform 0.6s;
+}
+
+/* Grid Pattern Background */
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, rgb(255 255 255 / 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgb(255 255 255 / 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Feature Card Hover Effect */
+.feature-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px -2px rgb(0 0 0 / 0.3);
+}
+
+/* Process Step Animation */
+.process-step {
+  position: relative;
+}
+
+.process-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 48px;
+  bottom: -48px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.1), transparent);
+}
+
+/* Section Transitions */
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.1), transparent);
+}
+
+/* Testimonial Carousel */
+.testimonial-carousel {
+  position: relative;
+}
+
+.testimonial-slide {
+  opacity: 0;
+  transform: translateX(20px);
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Testimonial Image Animation */
+.testimonial-slide img {
+  opacity: 0;
+  transform: scale(0.9);
+  animation: imageAppear 0.5s forwards 0.3s;
+}
+
+@keyframes imageAppear {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Quote Icon Float */
+.testimonial-slide .lucide-quote {
+  animation: float 3s ease-in-out infinite;
+  opacity: 0.2;
+  transition: opacity 0.3s ease;
+}
+
+.testimonial-slide:hover .lucide-quote {
+  opacity: 0.4;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Progress Indicator */
+.testimonial-carousel button.w-6 {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Navigation Buttons */
+.testimonial-carousel button {
+  transition: all 0.2s ease;
+}
+
+.testimonial-carousel button:hover {
+  transform: scale(1.1);
+}
+
+.testimonial-carousel button:active {
+  transform: scale(0.95);
+}
+
+/* Content Transition */
+.testimonial-slide p,
+.testimonial-slide .font-medium,
+.testimonial-slide .text-sm {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: contentFade 0.5s forwards 0.5s;
+}
+
+@keyframes contentFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Border Glow Effect */
+.testimonial-slide {
+  position: relative;
+}
+
+.testimonial-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Auto-rotate Progress */
+@keyframes progressBar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.testimonial-carousel::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
+  animation: progressBar 5s linear infinite;
+  animation-play-state: running;
+}
+
+.testimonial-carousel:hover::after {
+  animation-play-state: paused;
 }
