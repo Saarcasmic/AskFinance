@@ -29,6 +29,6 @@ app.include_router(questions.router, prefix="/comments", tags=["Comments"])
 # Google OAuth routes
 app.include_router(google.router, prefix="/google-auth", tags=["Google OAuth"])
 
-@app.get("/")
+@app.get("/health")
 def read_root():
     return {"message": "Hello, World!"}
