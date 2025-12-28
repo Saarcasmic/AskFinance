@@ -1,351 +1,403 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import './HomePage.css';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
+import { motion } from 'framer-motion';
+import { ShieldCheck, Zap, BookOpen, Check, Linkedin, Twitter } from 'lucide-react';
+import PhoneMockupFeed from '../components/PhoneMockupFeed';
+import './HomePageNew.css';
 
-const HomePage = () => {
-  const navigate = useNavigate();
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "Investment Analyst",
-      content: "AskFinance has been instrumental in helping me make informed investment decisions. The expert insights are invaluable.",
-      company: "Goldman Sachs",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
-    },
-    {
-      name: "Michael Rodriguez",
-      role: "Portfolio Manager",
-      content: "The quality of financial advice on this platform is exceptional. It's like having a team of expert advisors at your fingertips.",
-      company: "BlackRock",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
-    },
-    {
-      name: "Emily Thompson",
-      role: "Financial Advisor",
-      content: "As a financial advisor, I appreciate the platform's commitment to providing accurate, well-researched information.",
-      company: "Morgan Stanley",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
-    },
-    {
-      name: "David Park",
-      role: "Retail Investor",
-      content: "The platform has helped me understand complex financial concepts and make better investment choices.",
-      company: "Independent Trader",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80"
-    }
-  ];
-
-  const nextTestimonial = useCallback(() => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
-
-  const prevTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+// ========== HEADER ==========
+const Header = ({ onLogin, onSignup }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px"
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
     };
-    
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in');
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.animate-on-scroll').forEach((elem) => {
-      observer.observe(elem);
-    });
-
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-rotate testimonials
-  useEffect(() => {
-    let intervalId;
-    if (!isHovered) {
-      intervalId = setInterval(nextTestimonial, 5000);
-    }
-    return () => clearInterval(intervalId);
-  }, [isHovered, nextTestimonial]);
+  return (
+    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="header-container">
+        <div className="logo">
+          <span className="logo-text">AskFinance</span>
+        </div>
+
+        <div className="header-right">
+          <button className="btn-login" onClick={onLogin}>Log In</button>
+          <button className="btn-signup" onClick={onSignup}>Sign Up</button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// ========== HERO SECTION ==========
+const Hero = ({ onGetStarted }) => {
+  return (
+    <section className="hero">
+      <div className="hero-bg">
+        {/* Static Background Layer */}
+        <img
+          src="/heroo.jpg"
+          alt=""
+          className="hero-static"
+        />
+        {/* Animated Cutout Layer */}
+        <motion.img
+          src="/heroo.jpg"
+          alt="People celebrating"
+          className="hero-cutout"
+          initial={{ scale: 3, opacity: 0, y: 100 }}
+          animate={{ scale: 1.5, opacity: 1, y: 0 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </div>
+
+      <div className="hero-content">
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Professional Financial Guidance & Expertise
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Connect with verified financial experts for personalized advice and professional insights. Make informed decisions with institutional-grade guidance.
+        </motion.p>
+
+        <motion.button
+          className="btn-cta"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          onClick={onGetStarted}
+        >
+          Get Started
+        </motion.button>
+      </div>
+    </section>
+  );
+};
+
+// ========== HOW IT WORKS SECTION ==========
+const WelcomeSection = ({ onCreateAccount }) => {
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  const steps = [
+    {
+      number: '01',
+      title: 'Submit Your Query',
+      description: 'Provide detailed context for comprehensive guidance.',
+    },
+    {
+      number: '02',
+      title: 'Expert Assignment',
+      description: 'Get matched with a qualified financial advisor.',
+    },
+    {
+      number: '03',
+      title: 'Receive Professional Insight',
+      description: 'Obtain actionable recommendations and analysis.',
+    },
+  ];
 
   return (
-    <div className="bg-zinc-900 text-white">
-      {/* Hero Section */}
-      <section className="min-h-screen relative flex items-center border-b border-white/5">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 to-black"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-semibold leading-tight mb-8 animate-on-scroll">
-              Professional Financial
-              <br />
-              <span className="text-white/90">Guidance & Expertise</span>
-            </h1>
-            <p className="text-lg md:text-xl text-zinc-400 mb-12 animate-on-scroll delay-200 max-w-2xl">
-              Connect with verified financial experts for personalized advice and professional insights. 
-              Make informed decisions with institutional-grade guidance.
+    <section className="welcome-section" ref={ref}>
+      <div className="welcome-container">
+        <motion.h2
+          className="how-it-works-title"
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          How It Works
+        </motion.h2>
+
+        <div className="steps-wrapper">
+          <div className="steps-container">
+            {steps.map((step, index) => (
+              <motion.div
+                key={index}
+                className="step-item"
+                initial={{ opacity: 0, x: -30 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+              >
+                <div className="step-number-container">
+                  <div className="step-circle" />
+                  <div className="step-number">{step.number}</div>
+                  {index < steps.length - 1 && <div className="step-connector" />}
+                </div>
+                <div className="step-content">
+                  <h3 className="step-title">{step.title}</h3>
+                  <p className="step-description">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            className="how-it-works-image"
+            initial={{ opacity: 0, x: 50 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8 }}
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+              alt="Financial consultation" 
+            />
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="how-it-works-cta centered"
+        >
+          <button className="btn-cta btn-cta-dark" onClick={onCreateAccount}>Create Account</button>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+// ========== APP MOCKUP SECTION ==========
+const AppMockupSection = () => {
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  const features = [
+    'Expert-verified responses within 24 hours',
+    'Comprehensive market analysis and insights',
+    'Personalized investment strategies',
+    'Regulatory compliant advice',
+  ];
+
+  return (
+    <section className="global-transfer-section" ref={ref}>
+      <div className="global-bg">
+        <div className="world-map" />
+      </div>
+      
+      <div className="mockup-container">
+        <motion.div
+          className="mockup-text"
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          <h2>Institutional-Grade Financial Advice</h2>
+          <p>
+            AskFinance bridges the gap between retail investors and professional financial expertise. Our platform connects you with verified financial advisors, providing institutional-quality guidance typically reserved for high-net-worth clients.
+          </p>
+          <ul className="feature-checklist">
+            {features.map((feature, index) => (
+              <motion.li
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+              >
+                <Check size={20} className="check-icon" />
+                <span>{feature}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </motion.div>
+
+        <motion.div
+          className="phone-mockup"
+          initial={{ opacity: 0, y: 50 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <div className="phone-frame">
+            <div className="phone-screen">
+              <PhoneMockupFeed />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+// ========== FEATURE GRID SECTION ==========
+const FeatureGridSection = () => {
+  const { ref, inView } = useInView({
+    threshold: 0.2,
+    triggerOnce: true,
+  });
+
+  const cards = [
+    {
+      title: 'Verified Expertise',
+      description: 'All advisors undergo rigorous verification to ensure highest quality guidance.',
+      icon: <ShieldCheck size={32} />,
+      image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    },
+    {
+      title: 'Rapid Response',
+      description: 'Get timely answers to your critical financial questions from industry experts.',
+      icon: <Zap size={32} />,
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    },
+    {
+      title: 'Knowledge Repository',
+      description: 'Access comprehensive financial insights and market analysis.',
+      icon: <BookOpen size={32} />,
+      image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    },
+  ];
+
+  return (
+    <section className="feature-grid-section" ref={ref} style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/white.jpg)` }}>
+      <motion.h2
+        initial={{ opacity: 0, y: 30 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6 }}
+      >
+        Why Choose AskFinance
+      </motion.h2>
+
+      <div className="feature-grid">
+        {cards.map((card, index) => (
+          <motion.div
+            key={index}
+            className="feature-card"
+            initial={{ opacity: 0, y: 40 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: index * 0.15 }}
+          >
+            <div className="card-bg">
+              <img src={card.image} alt={card.title} loading="lazy" />
+              <div className="card-overlay" />
+            </div>
+            <div className="card-content">
+              <div className="card-icon">{card.icon}</div>
+              <span className="card-title">{card.title}</span>
+              <p className="card-description">{card.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// ========== FINAL CTA SECTION ==========
+const FinalCTASection = ({ onLogin, onSignup }) => {
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  return (
+    <section className="final-cta-section" ref={ref}>
+      <motion.div
+        className="cta-container"
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8 }}
+      >
+        <h2>
+          Where investors verify info before the noise spreads
+        </h2>
+
+        <div className="cta-buttons">
+          <button className="btn-secondary" onClick={onLogin}>Log In</button>
+          <button className="btn-outline" onClick={onSignup}>
+            Sign Up
+          </button>
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
+// ========== FOOTER ==========
+const Footer = () => {
+  return (
+    <footer className="footer">
+      <div className="footer-container">
+        <div className="footer-top">
+          <div className="footer-brand">
+            <span className="logo-text">AskFinance</span>
+            <p>
+              A professional platform dedicated to providing expert financial guidance through verified advisors and industry professionals. Your trusted source for financial clarity.
             </p>
-            <button 
-              onClick={() => navigate("/login")}
-              className="px-8 py-4 bg-white text-zinc-900 rounded-md text-sm font-medium
-                       hover:bg-zinc-100 transition-colors duration-200 animate-on-scroll delay-400"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 relative bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
-            Why Choose AskFinance
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                ),
-                title: "Verified Expertise",
-                description: "All advisors undergo rigorous verification to ensure highest quality guidance."
-              },
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                ),
-                title: "Rapid Response",
-                description: "Get timely answers to your critical financial questions from industry experts."
-              },
-              {
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                ),
-                title: "Knowledge Repository",
-                description: "Access comprehensive financial insights and market analysis."
-              }
-            ].map((feature, index) => (
-              <div 
-                key={index}
-                className="feature-card bg-zinc-900 border border-white/5 rounded-lg p-6 animate-on-scroll"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="text-white mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-medium mb-3 text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-24 bg-zinc-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
-            How It Works
-          </h2>
-
-          <div className="max-w-5xl mx-auto">
-            {[
-              {
-                number: "01",
-                title: "Submit Your Query",
-                description: "Provide detailed context for comprehensive guidance."
-              },
-              {
-                number: "02",
-                title: "Expert Assignment",
-                description: "Get matched with a qualified financial advisor."
-              },
-              {
-                number: "03",
-                title: "Receive Professional Insight",
-                description: "Obtain actionable recommendations and analysis."
-              }
-            ].map((step, index) => (
-              <div 
-                key={index}
-                className="process-step flex items-start mb-16 last:mb-0 animate-on-scroll"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="mr-8 flex-shrink-0">
-                  <span className="inline-block w-12 h-12 rounded-full bg-white/5 text-white
-                                 flex items-center justify-center text-lg font-medium">
-                    {step.number}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-medium mb-2 text-white">{step.title}</h3>
-                  <p className="text-zinc-400">{step.description}</p>
-                </div>
-              </div>
-            ))}
           </div>
 
-          <div className="mt-16 text-center animate-on-scroll">
-            <button 
-              onClick={() => navigate("/signup")}
-              className="px-8 py-4 bg-white text-zinc-900 rounded-md text-sm font-medium
-                       hover:bg-zinc-100 transition-colors duration-200"
-            >
-              Create Account
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Project Overview Section */}
-      <section className="py-24 bg-black relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-12 text-center animate-on-scroll">
-              Transforming Financial Guidance
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="animate-on-scroll delay-200">
-                <h3 className="text-xl font-medium mb-6 text-white">Institutional-Grade Financial Advice</h3>
-                <p className="text-zinc-400 leading-relaxed mb-6">
-                  AskFinance bridges the gap between retail investors and professional financial expertise. 
-                  Our platform connects you with verified financial advisors, providing institutional-quality 
-                  guidance typically reserved for high-net-worth clients.
-                </p>
-                <ul className="space-y-4">
-                  {[
-                    "Expert-verified responses within 24 hours",
-                    "Comprehensive market analysis and insights",
-                    "Personalized investment strategies",
-                    "Regulatory compliant advice"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-center text-zinc-400">
-                      <svg className="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="relative animate-on-scroll delay-400">
-                <div className="aspect-square rounded-lg bg-zinc-800/50 border border-white/5 p-8 backdrop-blur-sm">
-                  <div className="relative h-full">
-                    <div className="absolute -top-4 -left-4 w-24 h-24 bg-white/5 rounded-full"></div>
-                    <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-white/5 rounded-full"></div>
-                    <div className="relative h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl font-semibold mb-2">10K+</div>
-                        <div className="text-zinc-400">Questions Answered</div>
-                        <div className="mt-8 text-4xl font-semibold mb-2">500+</div>
-                        <div className="text-zinc-400">Verified Experts</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="footer-links">
+            <div className="footer-column">
+              <h4>Resources</h4>
+              <a href="#about">About Us</a>
+              <a href="#faq">FAQ</a>
+              <a href="#experts">Our Experts</a>
+            </div>
+            <div className="footer-column">
+              <h4>Legal</h4>
+              <a href="#terms">Terms of Service</a>
+              <a href="#privacy">Privacy Policy</a>
+              <a href="#compliance">Compliance</a>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 bg-zinc-900 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-16 text-center animate-on-scroll">
-            Trusted by Financial Professionals
-          </h2>
-
-          <div className="max-w-4xl mx-auto relative">
-            <div 
-              className="testimonial-carousel relative"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              <div className="testimonial-slide bg-zinc-800/50 rounded-lg border border-white/5 p-8 backdrop-blur-sm">
-                <div className="flex items-start gap-6 mb-8">
-                  <div className="flex-shrink-0">
-                    <img 
-                      src={testimonials[currentTestimonial].image}
-                      alt={testimonials[currentTestimonial].name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <Quote className="w-8 h-8 text-white/20 mb-4" />
-                    <p className="text-lg text-zinc-300 leading-relaxed">
-                      "{testimonials[currentTestimonial].content}"
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between border-t border-white/5 pt-6">
-                  <div>
-                    <div className="font-medium text-white">
-                      {testimonials[currentTestimonial].name}
-                    </div>
-                    <div className="text-sm text-zinc-400 mt-1">
-                      {testimonials[currentTestimonial].role} • {testimonials[currentTestimonial].company}
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={prevTestimonial}
-                      className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={nextTestimonial}
-                      className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors duration-200"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center mt-6 space-x-2">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentTestimonial(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 
-                      ${index === currentTestimonial 
-                        ? 'bg-white w-6' 
-                        : 'bg-zinc-700 hover:bg-zinc-600'}`}
-                  />
-                ))}
-              </div>
-            </div>
+        <div className="footer-bottom">
+          <p>&copy; 2025 AskFinance. All rights reserved.</p>
+          <div className="footer-social">
+            <a href="#linkedin" aria-label="LinkedIn">
+              <Linkedin size={20} />
+            </a>
+            <a href="#twitter" aria-label="Twitter">
+              <Twitter size={20} />
+            </a>
           </div>
         </div>
-      </section>
+      </div>
+    </footer>
+  );
+};
+
+// ========== MAIN HOMEPAGE COMPONENT ==========
+const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleSignup = () => {
+    navigate('/signup');
+  };
+
+  return (
+    <div className="homepage-new">
+      <Header onLogin={handleLogin} onSignup={handleSignup} />
+      <main>
+        <Hero onGetStarted={handleSignup} />
+        <FeatureGridSection />
+        <WelcomeSection onCreateAccount={handleSignup} />
+        <AppMockupSection />
+        <FinalCTASection onLogin={handleLogin} onSignup={handleSignup} />
+      </main>
+      <Footer />
     </div>
   );
 };
